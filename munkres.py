@@ -5,7 +5,7 @@ The Munkres module provides an implementation of the Munkres algorithm
 (also called the Hungarian algorithm or the Kuhn-Munkres algorithm),
 useful for solving the Assignment Problem. 
 
-Assignment Problem
+ASSIGNMENT PROBLEM
 
 Let C be an nxn matrix representing the costs of each of n workers to
 perform any of n jobs. The assignment problem is to assign jobs to workers
@@ -307,7 +307,7 @@ See the module documentation for usage.
         For example:
 
         cost_matrix = Munkres.make_cost_matrix(matrix,
-                                               lambda x : sys.maxint - x
+                                               lambda x : sys.maxint - x)
         """
         cost_matrix = []
         for row in profit_matrix:
