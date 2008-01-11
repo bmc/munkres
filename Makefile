@@ -6,4 +6,4 @@ sdist:
 	python setup.py sdist --formats=gztar,zip
 
 clean:
-	rm -fr html dist build MANIFEST munkres.py
+	rm -fr html dist build MANIFEST munkres.pyc
