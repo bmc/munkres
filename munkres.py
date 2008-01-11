@@ -2,8 +2,8 @@
 INTRODUCTION
 
 The Munkres module provides an implementation of the Munkres algorithm
-(also called the Hungarian algorithm or the Kuhn-Munkres algorithm) for
-solving the Assignment Problem. 
+(also called the Hungarian algorithm or the Kuhn-Munkres algorithm),
+useful for solving the Assignment Problem. 
 
 Assignment Problem
 
