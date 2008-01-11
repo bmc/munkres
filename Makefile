@@ -1,8 +1,11 @@
 # $Id$
 
-all: sdist
+all: dist
 
-sdist:
+.PHONY: all sdist dist clean
+
+sdist: dist
+dist:
 	python setup.py sdist --formats=gztar,zip
 
 clean:
