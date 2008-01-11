@@ -1,18 +1,85 @@
 """
+INTRODUCTION
+
 The Munkres module provides an implementation of the Munkres algorithm
-(also called the Hungarian algorithm or the Kuhn-Munkres algorithm). The
-algorithm models the assignment problem as an NxM cost matrix, where each
-element represents the cost of assigning the ith worker to the jth job, and
-it figures out the least-cost solution, choosing a single item from each
-row and column in the matrix, such that no row and no column are used more
-than once.
+(also called the Hungarian algorithm or the Kuhn-Munkres algorithm) for
+solving the Assignment Problem. 
+
+Assignment Problem
+
+Let C be an nxn matrix representing the costs of each of n workers to
+perform any of n jobs. The assignment problem is to assign jobs to workers
+in a way that minimizes the total cost. Since each worker can perform only
+one job and each job can be assigned to only one worker the assignments
+represent an independent set of the matrix C.
+
+One way to generate the optimal set is to create all permutations of
+the indexes necessary to traverse the matrix so that no row and column
+are used more than once. For instance, given this matrix (expressed in
+Python):
+
+    matrix = [[5, 9, 1],
+              [10, 3, 2],
+              [8, 7, 4]]
+
+You could use this code to generate the traversal indexes:
+
+    def permute(a, results):
+        if len(a) == 1:
+            results.insert(len(results), a)
+
+        else:
+            for i in range(0, len(a)):
+                element = a[i]
+                a_copy = [a[j] for j in range(0, len(a)) if j != i]
+                subresults = []
+                permute(a_copy, subresults)
+                for subresult in subresults:
+                    result = [element] + subresult
+                    results.insert(len(results), result)
+
+    results = []
+    permute(range(len(matrix)), results) # [0, 1, 2] for a 3x3 matrix
+
+After the call to permute(), the results matrix would look like this:
+
+    [[0, 1, 2],
+     [0, 2, 1],
+     [1, 0, 2],
+     [1, 2, 0],
+     [2, 0, 1],
+     [2, 1, 0]]
+
+You could then use that index matrix to loop over the original cost matrix
+and calculate the smallest cost of the combinations:
+
+    n = len(matrix)
+    minval = sys.maxint
+    for row in range(n):
+        cost = 0
+        for col in range(n):
+            cost += matrix[row][col]
+        minval = min(cost, minval)
+
+    print minval
+
+While this approach works fine for small matrices, it does not scale. It
+executes in O(n!) time: Calculating the permutations for an NxN matrix
+requires N! operations. For a 12x12 matrix, that's 479,001,600 traversals.
+Even if you could manage to perform each traversal in just one millisecond,
+it would still take more than 133 hours to perform the entire traversal. A
+20x20 matrix would take 2,432,902,008,176,640,000 operations. At an
+optimistic millisecond per operation, that's more than 77 million years.
+
+The Munkres algorithm runs in O(n^3) time, rather than O(n!). This package
+provides an implementation of that algorithm.
 
 This version is based on
 http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html
 
-This version was adapted for Python by Brian Clapper (bmc@clapper.org),
-from the algorithm at the above web site. (The Algorithm::Munkres Perl
-version, in CPAN, was clearly adapted from the same web site.)
+This version was written for Python by Brian Clapper (bmc@clapper.org),
+from the (Ada) algorithm at the above web site. (The Algorithm::Munkres
+Perl version, in CPAN, was clearly adapted from the same web site.)
 
 USAGE
 
@@ -554,7 +621,7 @@ See the module documentation for usage.
                 if self.marked[i][j] == 2:
                     self.marked[i][j] = 0
 
-    
+
 
 if __name__ == '__main__':
     cost = [[999600, 999850, 999600],
