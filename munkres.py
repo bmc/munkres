@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: iso-8859-1 -*-
 """
 INTRODUCTION
 
@@ -228,7 +230,7 @@ REFERENCES
 
 COPYRIGHT AND LICENSE
 
-Copyright (c) 2008 Brian M. Clapper
+Copyright © 2008 Brian M. Clapper
 
 This is free software, released under the following BSD-like license:
 
