@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
+
+# Documentation is intended to be processed by Epydoc.
 """
-INTRODUCTION
+Introduction
+============
 
 The Munkres module provides an implementation of the Munkres algorithm
 (also called the Hungarian algorithm or the Kuhn-Munkres algorithm),
 useful for solving the Assignment Problem. 
 
-ASSIGNMENT PROBLEM
+Assignment Problem
+==================
 
 Let C be an nxn matrix representing the costs of each of n workers to
 perform any of n jobs. The assignment problem is to assign jobs to workers
@@ -18,13 +22,13 @@ represent an independent set of the matrix C.
 One way to generate the optimal set is to create all permutations of
 the indexes necessary to traverse the matrix so that no row and column
 are used more than once. For instance, given this matrix (expressed in
-Python):
+Python)::
 
     matrix = [[5, 9, 1],
               [10, 3, 2],
               [8, 7, 4]]
 
-You could use this code to generate the traversal indexes:
+You could use this code to generate the traversal indexes::
 
     def permute(a, results):
         if len(a) == 1:
@@ -43,7 +47,7 @@ You could use this code to generate the traversal indexes:
     results = []
     permute(range(len(matrix)), results) # [0, 1, 2] for a 3x3 matrix
 
-After the call to permute(), the results matrix would look like this:
+After the call to permute(), the results matrix would look like this::
 
     [[0, 1, 2],
      [0, 2, 1],
@@ -53,7 +57,7 @@ After the call to permute(), the results matrix would look like this:
      [2, 1, 0]]
 
 You could then use that index matrix to loop over the original cost matrix
-and calculate the smallest cost of the combinations:
+and calculate the smallest cost of the combinations::
 
     n = len(matrix)
     minval = sys.maxint
@@ -66,33 +70,34 @@ and calculate the smallest cost of the combinations:
     print minval
 
 While this approach works fine for small matrices, it does not scale. It
-executes in O(n!) time: Calculating the permutations for an NxN matrix
-requires N! operations. For a 12x12 matrix, that's 479,001,600 traversals.
+executes in O(I{n}!) time: Calculating the permutations for an I{n}xI{n} matrix
+requires I{n}! operations. For a 12x12 matrix, that's 479,001,600 traversals.
 Even if you could manage to perform each traversal in just one millisecond,
 it would still take more than 133 hours to perform the entire traversal. A
 20x20 matrix would take 2,432,902,008,176,640,000 operations. At an
 optimistic millisecond per operation, that's more than 77 million years.
 
-The Munkres algorithm runs in O(n^3) time, rather than O(n!). This package
-provides an implementation of that algorithm.
+The Munkres algorithm runs in O(I{n}^3) time, rather than O(I{n}!). This
+package provides an implementation of that algorithm.
 
 This version is based on
-http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html
+U{http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html}.
 
-This version was written for Python by Brian Clapper (bmc@clapper.org),
-from the (Ada) algorithm at the above web site. (The Algorithm::Munkres
-Perl version, in CPAN, was clearly adapted from the same web site.)
+This version was written for Python by Brian Clapper from the (Ada)
+algorithm at the above web site. (The Algorithm::Munkres Perl version, in
+CPAN, was clearly adapted from the same web site.)
 
-USAGE
+Usage
+=====
 
-Construct a Munkres object:
+Construct a Munkres object::
 
     from munkres import Munkres
 
     m = Munkres()
 
 Then use it to compute the lowest cost assignment from a cost matrix. Here's
-a sample program:
+a sample program::
 
     from munkres import Munkres
 
@@ -115,7 +120,7 @@ a sample program:
         print '(%d, %d) -> %d' % (row, column, value)
     print 'total cost: %d' % total
 
-Running that program produces:
+Running that program produces::
 
     Lowest cost through this matrix:
     [5, 9, 1]
@@ -129,14 +134,15 @@ Running that program produces:
 The instantiated Munkres object can be used multiple times on different
 matrices.
 
-CALCULATING PROFIT, RATHER THAN COST
+Calculating Profit, Rather than Cost
+====================================
 
 The cost matrix is just that: A cost matrix. The Munkres algorithm finds
 the combination of elements (one from each row and column) that results in
 the smallest cost. It's also possible to use the algorithm to maximize
 profit. To do that, however, you have to convert your profit matrix to a
 cost matrix. The simplest way to do that is to subtract all elements from a
-large value. For example:
+large value. For example::
 
     from munkres import Munkres
 
@@ -167,7 +173,7 @@ large value. For example:
 
     Print 'total profit=%d' % total
 
-Running that program produces:
+Running that program produces::
 
     Highest profit through this matrix:
     [5, 9, 1]
@@ -182,12 +188,12 @@ The Munkres class provides a convenience method for creating a cost matrix
 from a profit matrix. Since it doesn't know whether the matrix contains
 floating point numbers, decimals, or integers, you have to provide the
 conversion function; but the convenience method takes care of the actual
-creation of the cost matrix:
+creation of the cost matrix::
 
     cost_matrix = Munkres.make_cost_matrix(matrix,
                                            lambda cost: sys.maxint - cost)
 
-So, the above profit-calculation program can be recast as:
+So, the above profit-calculation program can be recast as::
 
     from munkres import Munkres
 
@@ -212,23 +218,25 @@ So, the above profit-calculation program can be recast as:
         print '(%d, %d) -> %d' % (row, column, value)
     print 'total profit=%d' % total
 
-REFERENCES
+References
+==========
 
-1. http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html
+  1. U{http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html}
 
-2. Harold W. Kuhn. The Hungarian Method for the assignment problem.
-   Naval Research Logistics Quarterly, 2:83-97, 1955.
+  2. Harold W. Kuhn. The Hungarian Method for the assignment problem.
+     Naval Research Logistics Quarterly, 2:83-97, 1955.
 
-3. Harold W. Kuhn. Variants of the Hungarian method for assignment
-   problems. Naval Research Logistics Quarterly, 3: 253-258, 1956.
+  3. Harold W. Kuhn. Variants of the Hungarian method for assignment
+     problems. Naval Research Logistics Quarterly, 3: 253-258, 1956.
 
-4. Munkres, J. Algorithms for the Assignment and Transportation Problems.
-   Journal of the Society of Industrial and Applied Mathematics,
-   5(1):32-38, March, 1957.
+  4. Munkres, J. Algorithms for the Assignment and Transportation Problems.
+     Journal of the Society of Industrial and Applied Mathematics,
+     5(1):32-38, March, 1957.
 
-5. http://en.wikipedia.org/wiki/Hungarian_algorithm
+  5. U{http://en.wikipedia.org/wiki/Hungarian_algorithm}
 
-COPYRIGHT AND LICENSE
+Copyright and License
+=====================
 
 Copyright © 2008 Brian M. Clapper
 
@@ -237,18 +245,18 @@ This is free software, released under the following BSD-like license:
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-1. Redistributions of source code must retain the above copyright notice,
-   this list of conditions and the following disclaimer.
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
 
-2. The end-user documentation included with the redistribution, if any,
-   must include the following acknowlegement:
+  2. The end-user documentation included with the redistribution, if any,
+     must include the following acknowlegement:
 
-      This product includes software developed by Brian M. Clapper
-      (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-      copyright (c) 2008 Brian M. Clapper.
+     This product includes software developed by Brian M. Clapper
+     (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
+     copyright (c) 2008 Brian M. Clapper.
 
-    Alternately, this acknowlegement may appear in the software itself, if
-    and wherever such third-party acknowlegements normally appear.
+     Alternately, this acknowlegement may appear in the software itself, if
+     and wherever such third-party acknowlegements normally appear.
 
 THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
 WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -267,7 +275,7 @@ $Id$
 import sys
 
 # Info about the module
-__version__   = "1.0"
+__version__   = "1.0.1"
 __author__    = "Brian Clapper, bmc <at> clapper <dot> org"
 __url__       = "http://www.clapper.org/software/python/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
@@ -308,8 +316,7 @@ See the module documentation for usage.
 
         For example:
 
-        cost_matrix = Munkres.make_cost_matrix(matrix,
-                                               lambda x : sys.maxint - x)
+        cost_matrix = Munkres.make_cost_matrix(matrix, lambda x : sys.maxint - x)
         """
         cost_matrix = []
         for row in profit_matrix:
@@ -479,8 +486,8 @@ See the module documentation for usage.
     def __step5(self):
         """
         Construct a series of alternating primed and starred zeros as
-        follows. Let Z0 represent the uncovered primed zero found in Step
-        4. Let Z1 denote the starred zero in the column of Z0 (if any).
+        follows. Let Z0 represent the uncovered primed zero found in Step 4.
+        Let Z1 denote the starred zero in the column of Z0 (if any).
         Let Z2 denote the primed zero in the row of Z1 (there will always
         be one). Continue until the series terminates at a primed zero
         that has no starred zero in its column. Unstar each starred zero
