@@ -13,11 +13,21 @@ VERSION = str(munkres.__version__)
 URL = munkres.__url__
 LICENSE = munkres.__license__
 
-setup (name="munkres",
-       version=VERSION,
-       description="munkres algorithm for the Assignment Problem",
-       url=URL,
-       license=LICENSE,
-       author=AUTHOR,
-       author_email=EMAIL,
-       py_modules=["munkres"])
+setup(
+    name="munkres",
+    version=VERSION,
+    description="munkres algorithm for the Assignment Problem",
+    url=URL,
+    license=LICENSE,
+    author=AUTHOR,
+    author_email=EMAIL,
+    py_modules=["munkres"],
+    classifiers = [
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Scientific/Engineering :: Mathematics'        
+    ]
+)
