@@ -494,7 +494,6 @@ See the module documentation for usage.
         of the series, star each primed zero of the series, erase all
         primes and uncover every line in the matrix. Return to Step 3
         """
-        print 'new'
         count = 0
         path = self.path
         path[count][0] = self.Z0_r
@@ -504,7 +503,6 @@ See the module documentation for usage.
             row = self.__find_star_in_col(path[count][1])
             if row >= 0:
                 count += 1
-                print '1) %d' % count
                 path[count][0] = row
                 path[count][1] = path[count-1][1]
             else:
@@ -513,7 +511,6 @@ See the module documentation for usage.
             if not done:
                 col = self.__find_prime_in_row(path[count][0])
                 count += 1
-                print '2) %d' % count
                 path[count][0] = path[count-1][0]
                 path[count][1] = col
 
