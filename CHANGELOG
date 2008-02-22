@@ -1,6 +1,10 @@
 $Id$
 ---------------------------------------------------------------------------
 
+1.0.2 (21 February, 2008)
+
+- Fixed an overindexing bug reported by Chris Willmore (willmc <at> rpi.edu)
+
 1.0.1 (16 February, 2008)
 
 - Documentation now processed by Epydoc.
