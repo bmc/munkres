@@ -275,7 +275,7 @@ $Id$
 import sys
 
 # Info about the module
-__version__   = "1.0.3"
+__version__   = "1.0.3x1"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://www.clapper.org/software/python/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
@@ -638,11 +638,11 @@ if __name__ == '__main__':
             [999700, 999775, 999700]]
     m = Munkres()
     indexes = m.compute(cost)
-    total_ctr = 0
+    total_cost = 0
     for r, c in indexes:
         x = cost[r][c]
-        ctr = 1000000 - x
-        total_ctr += ctr
-        print '(%d, %d) -> %d (ctr=%d)' % (r, c, x, ctr)
+        cost = 1000000 - x
+        total_cost += cost
+        print '(%d, %d) -> %d (cost=%d)' % (r, c, x, cost)
 
-    print 'total CTR=%d' % total_ctr
+    print 'total COST=%d' % total_cost
