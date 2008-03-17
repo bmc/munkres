@@ -275,7 +275,7 @@ $Id$
 import sys
 
 # Info about the module
-__version__   = "1.0.3x1"
+__version__   = "1.0.3"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://www.clapper.org/software/python/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
