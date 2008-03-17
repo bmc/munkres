@@ -275,7 +275,7 @@ $Id$
 import sys
 
 # Info about the module
-__version__   = "1.0.2"
+__version__   = "1.0.3"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://www.clapper.org/software/python/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
@@ -526,13 +526,13 @@ See the module documentation for usage.
         Return to Step 4 without altering any stars, primes, or covered
         lines.
         """
-        min = self.__find_smallest()
+        minval = self.__find_smallest()
         for i in range(self.n):
             for j in range(self.n):
                 if self.row_covered[i]:
-                    self.C[i][j] += min
+                    self.C[i][j] += minval
                 if not self.col_covered[j]:
-                    self.C[i][j] -= min
+                    self.C[i][j] -= minval
         return 4
 
     def __find_smallest(self):

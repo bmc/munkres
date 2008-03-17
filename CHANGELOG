@@ -1,6 +1,12 @@
 $Id$
 ---------------------------------------------------------------------------
 
+1.0.3 (16 March, 2008)
+
+- Minor change to prevent shadowing of built-in min() function. Thanks to
+  Nelson Castillo (nelson /at/ emqbit.com) for pointing it out.
+
+
 1.0.2 (21 February, 2008)
 
 - Fixed an overindexing bug reported by Chris Willmore (willmc <at> rpi.edu)

@@ -28,6 +28,7 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Topic :: Scientific/Engineering :: Mathematics'        
+        'Topic :: Scientific/Engineering :: Mathematics', 
+        'Topic :: Software Development :: Libraries :: Python Modules'
     ]
 )
