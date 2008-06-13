@@ -275,7 +275,7 @@ $Id$
 import sys
 
 # Info about the module
-__version__   = "1.0.3"
+__version__   = "1.0.4"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://www.clapper.org/software/python/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
@@ -641,8 +641,8 @@ if __name__ == '__main__':
     total_cost = 0
     for r, c in indexes:
         x = cost[r][c]
-        cost = 1000000 - x
-        total_cost += cost
-        print '(%d, %d) -> %d (cost=%d)' % (r, c, x, cost)
+        n = 1000000 - x
+        total_cost += n
+        print '(%d, %d) -> %d (cost=%d)' % (r, c, x, n)
 
     print 'total COST=%d' % total_cost
