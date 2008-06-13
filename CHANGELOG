@@ -1,6 +1,10 @@
 $Id$
 ---------------------------------------------------------------------------
 
+1.0.4 (13 June, 2008)
+
+- Minor bug fix in main (tester) program in munkres.py
+
 1.0.3 (16 March, 2008)
 
 - Minor change to prevent shadowing of built-in min() function. Thanks to
