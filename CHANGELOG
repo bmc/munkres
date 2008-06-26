@@ -1,6 +1,10 @@
 $Id$
 ---------------------------------------------------------------------------
 
+1.0.5.1 (26 June, 2008):
+
+- Some minor doc changes.
+
 1.0.5 (26 June, 2008):
 
 - Now handles non-square cost matrices by padding them with zeros.

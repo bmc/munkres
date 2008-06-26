@@ -153,6 +153,9 @@ possible to use a non-square matrix (i.e., a rectangular or irregular matrix)
 if you first pad it with 0 values to make it square. This module automatically
 pads non-square cost matrices.
 
+Note that the module operates on a *copy* of the caller's matrix, so any
+padding will not be seen by the caller.
+
 Calculating Profit, Rather than Cost
 ====================================
 
@@ -243,13 +246,6 @@ So, the above profit-calculation program can be recast as:
         print '(%d, %d) -> %d' % (row, column, value)
     print 'total profit=%d' % total
 
-Limitations
-===========
-
-- This module *requires* that the cost matrix be square. If you need to use
-  a rectangular matrix, pad it with rows or columns containing zeros, to make
-  it square. (I'll eventually extend this module to do that padding for you.)
-
 References
 ==========
 
@@ -323,7 +319,7 @@ __all__     = ["Munkres"]
 # ---------------------------------------------------------------------------
 
 # Info about the module
-__version__   = "1.0.5"
+__version__   = "1.0.5.1"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://www.clapper.org/software/python/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
@@ -436,6 +432,8 @@ class Munkres:
             cost_matrix : list of lists
                 The cost matrix. If this cost matrix is not square, it
                 will be padded with zeros, via a call to ``pad_matrix()``.
+                (This method does *not* modify the caller's matrix. It
+                operates on a copy of the matrix.)
                 
         :rtype: list
         :return: A list of ``(row, column)`` tuples that describe the lowest
