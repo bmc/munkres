@@ -2,6 +2,7 @@
 # -*- coding: iso-8859-1 -*-
 
 # Documentation is intended to be processed by Epydoc.
+
 """
 Introduction
 ============
@@ -13,22 +14,26 @@ useful for solving the Assignment Problem.
 Assignment Problem
 ==================
 
-Let C be an nxn matrix representing the costs of each of n workers to
-perform any of n jobs. The assignment problem is to assign jobs to workers
-in a way that minimizes the total cost. Since each worker can perform only
-one job and each job can be assigned to only one worker the assignments
-represent an independent set of the matrix C.
+Let *C* be an *n*\ x\ *n* matrix representing the costs of each of *n* workers
+to perform any of *n* jobs. The assignment problem is to assign jobs to
+workers in a way that minimizes the total cost. Since each worker can perform
+only one job and each job can be assigned to only one worker the assignments
+represent an independent set of the matrix *C*.
 
 One way to generate the optimal set is to create all permutations of
 the indexes necessary to traverse the matrix so that no row and column
 are used more than once. For instance, given this matrix (expressed in
-Python)::
+Python):
+
+.. python::
 
     matrix = [[5, 9, 1],
               [10, 3, 2],
               [8, 7, 4]]
 
-You could use this code to generate the traversal indexes::
+You could use this code to generate the traversal indexes:
+
+.. python::
 
     def permute(a, results):
         if len(a) == 1:
@@ -57,7 +62,9 @@ After the call to permute(), the results matrix would look like this::
      [2, 1, 0]]
 
 You could then use that index matrix to loop over the original cost matrix
-and calculate the smallest cost of the combinations::
+and calculate the smallest cost of the combinations:
+
+.. python::
 
     n = len(matrix)
     minval = sys.maxint
@@ -70,34 +77,38 @@ and calculate the smallest cost of the combinations::
     print minval
 
 While this approach works fine for small matrices, it does not scale. It
-executes in O(I{n}!) time: Calculating the permutations for an I{n}xI{n} matrix
-requires I{n}! operations. For a 12x12 matrix, that's 479,001,600 traversals.
-Even if you could manage to perform each traversal in just one millisecond,
-it would still take more than 133 hours to perform the entire traversal. A
-20x20 matrix would take 2,432,902,008,176,640,000 operations. At an
-optimistic millisecond per operation, that's more than 77 million years.
+executes in O(*n*!) time: Calculating the permutations for an *n*\ x\ *n*
+matrix requires *n*! operations. For a 12x12 matrix, that's 479,001,600
+traversals. Even if you could manage to perform each traversal in just one
+millisecond, it would still take more than 133 hours to perform the entire
+traversal. A 20x20 matrix would take 2,432,902,008,176,640,000 operations. At
+an optimistic millisecond per operation, that's more than 77 million years.
 
-The Munkres algorithm runs in O(I{n}^3) time, rather than O(I{n}!). This
+The Munkres algorithm runs in O(*n*\ ^3) time, rather than O(*n*!). This
 package provides an implementation of that algorithm.
 
 This version is based on
-U{http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html}.
+http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html.
 
-This version was written for Python by Brian Clapper from the (Ada)
-algorithm at the above web site. (The Algorithm::Munkres Perl version, in
-CPAN, was clearly adapted from the same web site.)
+This version was written for Python by Brian Clapper from the (Ada) algorithm
+at the above web site. (The ``Algorithm::Munkres`` Perl version, in CPAN, was
+clearly adapted from the same web site.)
 
 Usage
 =====
 
-Construct a Munkres object::
+Construct a Munkres object:
+
+.. python::
 
     from munkres import Munkres
 
     m = Munkres()
 
 Then use it to compute the lowest cost assignment from a cost matrix. Here's
-a sample program::
+a sample program:
+
+.. python::
 
     from munkres import Munkres
 
@@ -134,6 +145,14 @@ Running that program produces::
 The instantiated Munkres object can be used multiple times on different
 matrices.
 
+Non-square Cost Matrices
+========================
+
+The Munkres algorithm assumes that the cost matrix is square. However, it's
+possible to use a non-square matrix (i.e., a rectangular or irregular matrix)
+if you first pad it with 0 values to make it square. This module automatically
+pads non-square cost matrices.
+
 Calculating Profit, Rather than Cost
 ====================================
 
@@ -142,7 +161,9 @@ the combination of elements (one from each row and column) that results in
 the smallest cost. It's also possible to use the algorithm to maximize
 profit. To do that, however, you have to convert your profit matrix to a
 cost matrix. The simplest way to do that is to subtract all elements from a
-large value. For example::
+large value. For example:
+
+.. python::
 
     from munkres import Munkres
 
@@ -171,7 +192,7 @@ large value. For example::
         total += value
         print '(%d, %d) -> %d' % (row, column, value)
 
-    Print 'total profit=%d' % total
+    print 'total profit=%d' % total
 
 Running that program produces::
 
@@ -188,12 +209,16 @@ The Munkres class provides a convenience method for creating a cost matrix
 from a profit matrix. Since it doesn't know whether the matrix contains
 floating point numbers, decimals, or integers, you have to provide the
 conversion function; but the convenience method takes care of the actual
-creation of the cost matrix::
+creation of the cost matrix:
+
+.. python::
 
     cost_matrix = Munkres.make_cost_matrix(matrix,
                                            lambda cost: sys.maxint - cost)
 
-So, the above profit-calculation program can be recast as::
+So, the above profit-calculation program can be recast as:
+
+.. python::
 
     from munkres import Munkres
 
@@ -218,22 +243,29 @@ So, the above profit-calculation program can be recast as::
         print '(%d, %d) -> %d' % (row, column, value)
     print 'total profit=%d' % total
 
+Limitations
+===========
+
+- This module *requires* that the cost matrix be square. If you need to use
+  a rectangular matrix, pad it with rows or columns containing zeros, to make
+  it square. (I'll eventually extend this module to do that padding for you.)
+
 References
 ==========
 
-  1. U{http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html}
+1. http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html
 
-  2. Harold W. Kuhn. The Hungarian Method for the assignment problem.
-     Naval Research Logistics Quarterly, 2:83-97, 1955.
+2. Harold W. Kuhn. The Hungarian Method for the assignment problem.
+   *Naval Research Logistics Quarterly*, 2:83-97, 1955.
 
-  3. Harold W. Kuhn. Variants of the Hungarian method for assignment
-     problems. Naval Research Logistics Quarterly, 3: 253-258, 1956.
+3. Harold W. Kuhn. Variants of the Hungarian method for assignment
+   problems. *Naval Research Logistics Quarterly*, 3: 253-258, 1956.
 
-  4. Munkres, J. Algorithms for the Assignment and Transportation Problems.
-     Journal of the Society of Industrial and Applied Mathematics,
-     5(1):32-38, March, 1957.
+4. Munkres, J. Algorithms for the Assignment and Transportation Problems.
+   *Journal of the Society of Industrial and Applied Mathematics*,
+   5(1):32-38, March, 1957.
 
-  5. U{http://en.wikipedia.org/wiki/Hungarian_algorithm}
+5. http://en.wikipedia.org/wiki/Hungarian_algorithm
 
 Copyright and License
 =====================
@@ -245,20 +277,20 @@ This is free software, released under the following BSD-like license:
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-  1. Redistributions of source code must retain the above copyright notice,
-     this list of conditions and the following disclaimer.
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
 
-  2. The end-user documentation included with the redistribution, if any,
-     must include the following acknowlegement:
+2. The end-user documentation included with the redistribution, if any,
+   must include the following acknowlegement:
 
-     This product includes software developed by Brian M. Clapper
-     (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-     copyright (c) 2008 Brian M. Clapper.
+   This product includes software developed by Brian M. Clapper
+   (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
+   copyright (c) 2008 Brian M. Clapper.
 
-     Alternately, this acknowlegement may appear in the software itself, if
-     and wherever such third-party acknowlegements normally appear.
+   Alternately, this acknowlegement may appear in the software itself, if
+   and wherever such third-party acknowlegements normally appear.
 
-THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+THIS SOFTWARE IS PROVIDED **AS IS**, AND ANY EXPRESSED OR IMPLIED
 WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
 EVENT SHALL BRIAN M. CLAPPER BE LIABLE FOR ANY DIRECT, INDIRECT,
@@ -269,26 +301,42 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-$Id$
+``$Id$``
 """
+
+__docformat__ = 'restructuredtext'
+
+# ---------------------------------------------------------------------------
+# Imports
+# ---------------------------------------------------------------------------
 
 import sys
 
+# ---------------------------------------------------------------------------
+# Exports
+# ---------------------------------------------------------------------------
+
+__all__     = ["Munkres"]
+
+# ---------------------------------------------------------------------------
+# Globals
+# ---------------------------------------------------------------------------
+
 # Info about the module
-__version__   = "1.0.4"
+__version__   = "1.0.5"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://www.clapper.org/software/python/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
 __license__   = "BSD-style license"
 
-# Package stuff
-
-__all__     = ["Munkres"]
+# ---------------------------------------------------------------------------
+# Classes
+# ---------------------------------------------------------------------------
 
 class Munkres:
     """
-Calculate the Munkres solution to the classical assignment problem.
-See the module documentation for usage.
+    Calculate the Munkres solution to the classical assignment problem.
+    See the module documentation for usage.
     """
 
     def __init__(self):
@@ -311,12 +359,26 @@ See the module documentation for usage.
         of the original profit.
 
         This is a static method. Call it like this:
+        
+        .. python::
 
-        cost_matrix = Munkres.make_cost_matrix(matrix, inversion_func)
+            cost_matrix = Munkres.make_cost_matrix(matrix, inversion_func)
 
         For example:
 
-        cost_matrix = Munkres.make_cost_matrix(matrix, lambda x : sys.maxint - x)
+        .. python::
+
+            cost_matrix = Munkres.make_cost_matrix(matrix, lambda x : sys.maxint - x)
+            
+        :Parameters:
+            profit_matrix : list of lists
+                The matrix to convert from a profit to a cost matrix
+                
+            inversion_function : function
+                The function to use to invert each entry in the profit matrix
+                
+        :rtype: list of lists
+        :return: The converted matrix
         """
         cost_matrix = []
         for row in profit_matrix:
@@ -328,15 +390,59 @@ See the module documentation for usage.
 
     make_cost_matrix = staticmethod(make_cost_matrix)
 
+    def pad_matrix(self, matrix, pad_value=0):
+        """
+        Pad a possibly non-square matrix to make it square.
+        
+        :Parameters:
+            matrix : list of lists
+                matrix to pad
+                
+            pad_value : int
+                value to use to pad the matrix
+                
+        :rtype: list of lists
+        :return: a new, possibly padded, matrix
+        """
+        max_columns = 0
+        total_rows = len(matrix)
+    
+        for row in matrix:
+            max_columns = max(max_columns, len(row))
+    
+        total_rows = max(max_columns, total_rows)
+    
+        new_matrix = []
+        for row in matrix:
+            row_len = len(row)
+            new_row = row[:]
+            if total_rows > row_len:
+                # Row too short. Pad it.
+                new_row += [0] * (total_rows - row_len)
+            new_matrix += [new_row]
+    
+        while len(new_matrix) < total_rows:
+            new_matrix += [[0] * total_rows]
+    
+        return new_matrix
+
     def compute(self, cost_matrix):
         """
         Compute the indexes for the lowest-cost pairings between rows and
         columns in the database. Returns a list of (row, column) tuples
         that can be used to traverse the matrix.
-
-        The matrix must be square.
+        
+        :Parameters:
+            cost_matrix : list of lists
+                The cost matrix. If this cost matrix is not square, it
+                will be padded with zeros, via a call to ``pad_matrix()``.
+                
+        :rtype: list
+        :return: A list of ``(row, column)`` tuples that describe the lowest
+                 cost path through the matrix
+            
         """
-        self.C = self.__copy_matrix(cost_matrix)
+        self.C = self.pad_matrix(cost_matrix)
         self.n = len(cost_matrix)
         self.row_covered = [False for i in range(self.n)]
         self.col_covered = [False for i in range(self.n)]
@@ -384,7 +490,7 @@ See the module documentation for usage.
         return copy
 
     def __make_matrix(self, n, val):
-        """Create an NxN matrix, populating it with the specific value."""
+        """Create an *n*x*n* matrix, populating it with the specific value."""
         matrix = []
         for i in range(n):
             matrix += [[val for j in range(n)]]
@@ -630,19 +736,57 @@ See the module documentation for usage.
                 if self.marked[i][j] == 2:
                     self.marked[i][j] = 0
 
-
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    cost = [[999600, 999850, 999600],
-            [999600, 999550, 999400],
-            [999700, 999775, 999700]]
-    m = Munkres()
-    indexes = m.compute(cost)
-    total_cost = 0
-    for r, c in indexes:
-        x = cost[r][c]
-        n = 1000000 - x
-        total_cost += n
-        print '(%d, %d) -> %d (cost=%d)' % (r, c, x, n)
 
-    print 'total COST=%d' % total_cost
+    def print_matrix(matrix, msg=None):
+        if msg is not None:
+            print msg
+        for row in matrix:
+            print row
+
+    matrices = [
+                # Square
+                ([[400, 150, 400],
+                  [400, 450, 600],
+                  [300, 225, 300]],
+                 850 # expected cost
+                ),
+
+                # Rectangular variant
+                ([[400, 150, 400, 1],
+                  [400, 450, 600, 2],
+                  [300, 225, 300, 3]],
+                 850 # expected cost
+                ),
+
+                # Square
+                ([[10, 10,  8],
+                  [ 9,  8,  1],
+                  [ 9,  7,  4]],
+                 18
+                ),
+
+                # Irregular
+                ([[10, 10,  8, 11],
+                  [ 9,  8,  1],
+                  [ 9,  7,  4, 10, 12]],
+                 18
+                ),
+               ]
+
+    m = Munkres()
+    for cost_matrix, expected_total in matrices:
+        print_matrix(cost_matrix, msg='')
+        indexes = m.compute(cost_matrix)
+        total_cost = 0
+        for r, c in indexes:
+            x = cost_matrix[r][c]
+            total_cost += x
+            print '(%d, %d) -> %d' % (r, c, x)
+        print 'lowest cost=%d' % total_cost
+        assert expected_total == total_cost
+
