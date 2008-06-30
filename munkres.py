@@ -435,7 +435,6 @@ class Munkres:
             for j in range(self.original_width):
                 if self.marked[i][j] == 1:
                     results += [(i, j)]
-        assert(len(results) == self.original_length)
 
         return results
 
