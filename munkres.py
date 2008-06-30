@@ -9,7 +9,7 @@ Introduction
 
 The Munkres module provides an implementation of the Munkres algorithm
 (also called the Hungarian algorithm or the Kuhn-Munkres algorithm),
-useful for solving the Assignment Problem. 
+useful for solving the Assignment Problem.
 
 Assignment Problem
 ==================
@@ -110,13 +110,7 @@ a sample program:
 
 .. python::
 
-    from munkres import Munkres
-
-    def print_matrix(msg, matrix):
-        print msg
-        for row in matrix:
-            print row
-
+    from munkres import Munkres, print_matrix
 
     matrix = [[5, 9, 1],
               [10, 3, 2],
@@ -149,12 +143,16 @@ Non-square Cost Matrices
 ========================
 
 The Munkres algorithm assumes that the cost matrix is square. However, it's
-possible to use a non-square matrix (i.e., a rectangular or irregular matrix)
-if you first pad it with 0 values to make it square. This module automatically
-pads non-square cost matrices.
+possible to use a rectangular matrix if you first pad it with 0 values to make
+it square. This module automatically pads rectangular cost matrices to make
+them square.
 
-Note that the module operates on a *copy* of the caller's matrix, so any
-padding will not be seen by the caller.
+Notes:
+
+- The module operates on a *copy* of the caller's matrix, so any padding will
+  not be seen by the caller.
+- The cost matrix must be rectangular or square. An irregular matrix will
+  *not* work.
 
 Calculating Profit, Rather than Cost
 ====================================
@@ -168,13 +166,7 @@ large value. For example:
 
 .. python::
 
-    from munkres import Munkres
-
-    def print_matrix(msg, matrix):
-        print msg
-        for row in matrix:
-            print row
-
+    from munkres import Munkres, print_matrix
 
     matrix = [[5, 9, 1],
               [10, 3, 2],
@@ -208,34 +200,29 @@ Running that program produces::
     (2, 2) -> 4
     total profit=23
 
-The Munkres class provides a convenience method for creating a cost matrix
-from a profit matrix. Since it doesn't know whether the matrix contains
+The ``munkres`` module provides a convenience method for creating a cost
+matrix from a profit matrix. Since it doesn't know whether the matrix contains
 floating point numbers, decimals, or integers, you have to provide the
 conversion function; but the convenience method takes care of the actual
 creation of the cost matrix:
 
 .. python::
 
-    cost_matrix = Munkres.make_cost_matrix(matrix,
+    import munkres
+
+    cost_matrix = munkres.make_cost_matrix(matrix,
                                            lambda cost: sys.maxint - cost)
 
 So, the above profit-calculation program can be recast as:
 
 .. python::
 
-    from munkres import Munkres
-
-    def print_matrix(msg, matrix):
-        print msg
-        for row in matrix:
-            print row
-
+    from munkres import Munkres, print_matrix, make_cost_matrix
 
     matrix = [[5, 9, 1],
-                 [10, 3, 2],
-                 [8, 7, 4]]
-    cost_matrix = Munkres.make_cost_matrix(matrix,
-                                           lambda cost: sys.maxint - cost)
+              [10, 3, 2],
+              [8, 7, 4]]
+    cost_matrix = make_cost_matrix(matrix, lambda cost: sys.maxint - cost)
     m = Munkres()
     indexes = m.compute(cost_matrix)
     print_matrix('Lowest cost through this matrix:', matrix)
@@ -295,7 +282,7 @@ NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ``$Id$``
 """
@@ -312,14 +299,14 @@ import sys
 # Exports
 # ---------------------------------------------------------------------------
 
-__all__     = ["Munkres"]
+__all__     = ['Munkres', 'make_cost_matrix']
 
 # ---------------------------------------------------------------------------
 # Globals
 # ---------------------------------------------------------------------------
 
 # Info about the module
-__version__   = "1.0.5.1"
+__version__   = "1.0.5.2"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://www.clapper.org/software/python/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
@@ -348,66 +335,37 @@ class Munkres:
 
     def make_cost_matrix(profit_matrix, inversion_function):
         """
-        Create a cost matrix from a profit matrix by calling
-        'inversion_function' to invert each value. The inversion
-        function must take one numeric argument (of any type) and return
-        another numeric argument which is presumed to be the cost inverse
-        of the original profit.
+        **DEPRECATED**
 
-        This is a static method. Call it like this:
-        
-        .. python::
-
-            cost_matrix = Munkres.make_cost_matrix(matrix, inversion_func)
-
-        For example:
-
-        .. python::
-
-            cost_matrix = Munkres.make_cost_matrix(matrix, lambda x : sys.maxint - x)
-            
-        :Parameters:
-            profit_matrix : list of lists
-                The matrix to convert from a profit to a cost matrix
-                
-            inversion_function : function
-                The function to use to invert each entry in the profit matrix
-                
-        :rtype: list of lists
-        :return: The converted matrix
+        Please use the module function ``make_cost_matrix()``.
         """
-        cost_matrix = []
-        for row in profit_matrix:
-            cost_row = []
-            for value in row:
-                cost_row += [inversion_function(value)]
-            cost_matrix += [cost_row]
-        return cost_matrix
+        import munkres
+        return munkres.make_cost_matrix(profit_matrix, inversion_function)
 
     make_cost_matrix = staticmethod(make_cost_matrix)
 
     def pad_matrix(self, matrix, pad_value=0):
         """
         Pad a possibly non-square matrix to make it square.
-        
+
         :Parameters:
             matrix : list of lists
                 matrix to pad
-                
+
             pad_value : int
                 value to use to pad the matrix
-                
+
         :rtype: list of lists
         :return: a new, possibly padded, matrix
         """
         max_columns = 0
         total_rows = len(matrix)
-    
+
         for row in matrix:
             max_columns = max(max_columns, len(row))
-    
+
         total_rows = max(max_columns, total_rows)
-    
+
         new_matrix = []
         for row in matrix:
             row_len = len(row)
@@ -416,10 +374,10 @@ class Munkres:
                 # Row too short. Pad it.
                 new_row += [0] * (total_rows - row_len)
             new_matrix += [new_row]
-    
+
         while len(new_matrix) < total_rows:
             new_matrix += [[0] * total_rows]
-    
+
         return new_matrix
 
     def compute(self, cost_matrix):
@@ -427,21 +385,26 @@ class Munkres:
         Compute the indexes for the lowest-cost pairings between rows and
         columns in the database. Returns a list of (row, column) tuples
         that can be used to traverse the matrix.
-        
+
         :Parameters:
             cost_matrix : list of lists
                 The cost matrix. If this cost matrix is not square, it
                 will be padded with zeros, via a call to ``pad_matrix()``.
                 (This method does *not* modify the caller's matrix. It
                 operates on a copy of the matrix.)
-                
+
+                **WARNING**: This code handles square and rectangular
+                matrices. It does *not* handle irregular matrices.
+
         :rtype: list
         :return: A list of ``(row, column)`` tuples that describe the lowest
                  cost path through the matrix
-            
+
         """
         self.C = self.pad_matrix(cost_matrix)
-        self.n = len(cost_matrix)
+        self.n = len(self.C)
+        self.original_length = len(cost_matrix)
+        self.original_width = len(cost_matrix[0])
         self.row_covered = [False for i in range(self.n)]
         self.col_covered = [False for i in range(self.n)]
         self.Z0_r = 0
@@ -462,30 +425,23 @@ class Munkres:
         while not done:
             try:
                 func = steps[step]
-                #print 'calling ' + str(func)
                 step = func()
             except KeyError:
                 done = True
 
         # Look for the starred columns
         results = []
-        for i in range(self.n):
-            for j in range(self.n):
+        for i in range(self.original_length):
+            for j in range(self.original_width):
                 if self.marked[i][j] == 1:
                     results += [(i, j)]
-        assert(len(results) == self.n)
+        assert(len(results) == self.original_length)
 
         return results
 
     def __copy_matrix(self, matrix):
         """Return an exact copy of the supplied matrix"""
-        copy = []
-        for row in matrix:
-            new_row = []
-            for item in row:
-                new_row += [item]
-            copy += [new_row]
-        return copy
+        return copy.deepcopy(matrix)
 
     def __make_matrix(self, n, val):
         """Create an *n*x*n* matrix, populating it with the specific value."""
@@ -502,13 +458,9 @@ class Munkres:
         C = self.C
         n = self.n
         for i in range(n):
-            minval = self.C[i][0]
-            # Find the minimum value for this row
-            for j in range(n):
-                if minval > self.C[i][j]:
-                    minval = self.C[i][j]
-
-            # Subtract that minimum from every element in the row.
+            minval = min(self.C[i])
+            # Find the minimum value for this row and subtract that minimum
+            # from every element in the row.
             for j in range(n):
                 self.C[i][j] -= minval
 
@@ -735,16 +687,83 @@ class Munkres:
                     self.marked[i][j] = 0
 
 # ---------------------------------------------------------------------------
+# Functions
+# ---------------------------------------------------------------------------
+
+def make_cost_matrix(profit_matrix, inversion_function):
+    """
+    Create a cost matrix from a profit matrix by calling
+    'inversion_function' to invert each value. The inversion
+    function must take one numeric argument (of any type) and return
+    another numeric argument which is presumed to be the cost inverse
+    of the original profit.
+
+    This is a static method. Call it like this:
+
+    .. python::
+
+        cost_matrix = Munkres.make_cost_matrix(matrix, inversion_func)
+
+    For example:
+
+    .. python::
+
+        cost_matrix = Munkres.make_cost_matrix(matrix, lambda x : sys.maxint - x)
+
+    :Parameters:
+        profit_matrix : list of lists
+            The matrix to convert from a profit to a cost matrix
+
+        inversion_function : function
+            The function to use to invert each entry in the profit matrix
+
+    :rtype: list of lists
+    :return: The converted matrix
+    """
+    cost_matrix = []
+    for row in profit_matrix:
+        cost_matrix.append([inversion_function(value) for value in row])
+    return cost_matrix
+
+def print_matrix(matrix, msg=None):
+    """
+    Convenience function: Displays the contents of a matrix of integers.
+
+    :Parameters:
+        matrix : list of lists
+            Matrix to print
+
+        msg : str
+            Optional message to print before displaying the matrix
+    """
+    import math
+
+    if msg is not None:
+        print msg
+
+    # Calculate the appropriate format width.
+    width = 0
+    for row in matrix:
+        for val in row:
+            width = max(width, int(math.log10(val)) + 1)
+
+    # Make the format string
+    format = '%%%dd' % width
+
+    # Print the matrix
+    for row in matrix:
+        sep = '['
+        for val in row:
+            sys.stdout.write(sep + format % val)
+            sep = ', '
+        sys.stdout.write(']\n')
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 if __name__ == '__main__':
 
-    def print_matrix(matrix, msg=None):
-        if msg is not None:
-            print msg
-        for row in matrix:
-            print row
 
     matrices = [
                 # Square
@@ -758,7 +777,7 @@ if __name__ == '__main__':
                 ([[400, 150, 400, 1],
                   [400, 450, 600, 2],
                   [300, 225, 300, 3]],
-                 850 # expected cost
+                 452 # expected cost
                 ),
 
                 # Square
@@ -768,17 +787,17 @@ if __name__ == '__main__':
                  18
                 ),
 
-                # Irregular
+                # Rectangular variant
                 ([[10, 10,  8, 11],
-                  [ 9,  8,  1],
-                  [ 9,  7,  4, 10, 12]],
-                 18
+                  [ 9,  8,  1, 1],
+                  [ 9,  7,  4, 10]],
+                 15
                 ),
                ]
 
     m = Munkres()
     for cost_matrix, expected_total in matrices:
-        print_matrix(cost_matrix, msg='')
+        print_matrix(cost_matrix, msg='cost matrix')
         indexes = m.compute(cost_matrix)
         total_cost = 0
         for r, c in indexes:

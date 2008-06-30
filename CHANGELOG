@@ -1,6 +1,15 @@
 $Id$
 ---------------------------------------------------------------------------
 
+1.0.5.2 (30 June, 2008):
+
+- Incorporated some suggestions optimizations from Mark Summerfield
+  (mark /at/ qtrac.eu)
+- Munkres.make_cost_matrix() is now deprecated, in favor of a module-level
+  function.
+- The module now provides a print_matrix() convenience function.
+- Fixed some bugs related to the padding of non-square matrics.
+
 1.0.5.1 (26 June, 2008):
 
 - Some minor doc changes.
