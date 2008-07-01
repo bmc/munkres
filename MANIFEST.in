@@ -1,2 +1,2 @@
 recursive-include html *
-include LICENSE README
+include LICENSE README CHANGELOG
