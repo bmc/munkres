@@ -6,21 +6,35 @@
 # ---------------------------------------------------------------------------
 
 from distutils.core import setup
-import re, munkres
+import re
+import os
+import sys
+import imp
 
-VERSION = str(munkres.__version__)
-(AUTHOR, EMAIL) = re.match('^(.*),\s*(.*)$', munkres.__author__).groups()
-URL = munkres.__url__
-LICENSE = munkres.__license__
+# Load the data.
+
+here = os.path.dirname(os.path.abspath(sys.argv[0]))
+sys.path = [here] + sys.path
+mf = os.path.join(here, 'munkres.py')
+munkres = imp.load_module('munkres', open(mf), mf,
+                          ('__init__.py', 'r', imp.PY_SOURCE))
+long_description = munkres.__doc__
+version = str(munkres.__version__)
+(author, email) = re.match('^(.*),\s*(.*)$', munkres.__author__).groups()
+url = munkres.__url__
+license = munkres.__license__
+
+# Run setup
 
 setup(
     name="munkres",
-    version=VERSION,
+    version=version,
     description="munkres algorithm for the Assignment Problem",
-    url=URL,
-    license=LICENSE,
-    author=AUTHOR,
-    author_email=EMAIL,
+    long_description=long_description,
+    url=url,
+    license=license,
+    author=author,
+    author_email=email,
     py_modules=["munkres"],
     classifiers = [
         'Intended Audience :: Developers',

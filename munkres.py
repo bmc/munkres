@@ -23,17 +23,13 @@ represent an independent set of the matrix *C*.
 One way to generate the optimal set is to create all permutations of
 the indexes necessary to traverse the matrix so that no row and column
 are used more than once. For instance, given this matrix (expressed in
-Python):
-
-.. python::
+Python)::
 
     matrix = [[5, 9, 1],
               [10, 3, 2],
               [8, 7, 4]]
 
-You could use this code to generate the traversal indexes:
-
-.. python::
+You could use this code to generate the traversal indexes::
 
     def permute(a, results):
         if len(a) == 1:
@@ -62,9 +58,7 @@ After the call to permute(), the results matrix would look like this::
      [2, 1, 0]]
 
 You could then use that index matrix to loop over the original cost matrix
-and calculate the smallest cost of the combinations:
-
-.. python::
+and calculate the smallest cost of the combinations::
 
     n = len(matrix)
     minval = sys.maxint
@@ -97,18 +91,14 @@ clearly adapted from the same web site.)
 Usage
 =====
 
-Construct a Munkres object:
-
-.. python::
+Construct a Munkres object::
 
     from munkres import Munkres
 
     m = Munkres()
 
 Then use it to compute the lowest cost assignment from a cost matrix. Here's
-a sample program:
-
-.. python::
+a sample program::
 
     from munkres import Munkres, print_matrix
 
@@ -162,9 +152,7 @@ the combination of elements (one from each row and column) that results in
 the smallest cost. It's also possible to use the algorithm to maximize
 profit. To do that, however, you have to convert your profit matrix to a
 cost matrix. The simplest way to do that is to subtract all elements from a
-large value. For example:
-
-.. python::
+large value. For example::
 
     from munkres import Munkres, print_matrix
 
@@ -204,18 +192,14 @@ The ``munkres`` module provides a convenience method for creating a cost
 matrix from a profit matrix. Since it doesn't know whether the matrix contains
 floating point numbers, decimals, or integers, you have to provide the
 conversion function; but the convenience method takes care of the actual
-creation of the cost matrix:
-
-.. python::
+creation of the cost matrix::
 
     import munkres
 
     cost_matrix = munkres.make_cost_matrix(matrix,
                                            lambda cost: sys.maxint - cost)
 
-So, the above profit-calculation program can be recast as:
-
-.. python::
+So, the above profit-calculation program can be recast as::
 
     from munkres import Munkres, print_matrix, make_cost_matrix
 
@@ -253,7 +237,7 @@ References
 Copyright and License
 =====================
 
-Copyright © 2008 Brian M. Clapper
+Copyright (c) 2008 Brian M. Clapper
 
 This is free software, released under the following BSD-like license:
 
