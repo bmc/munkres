@@ -107,7 +107,7 @@ a sample program::
               [8, 7, 4]]
     m = Munkres()
     indexes = m.compute(matrix)
-    print_matrix('Lowest cost through this matrix:', matrix)
+    print_matrix(matrix, msg='Lowest cost through this matrix:')
     total = 0
     for row, column in indexes:
         value = matrix[row][column]
@@ -168,7 +168,7 @@ large value. For example::
 
     m = Munkres()
     indexes = m.compute(cost_matrix)
-    print_matrix('Lowest cost through this matrix:', matrix)
+    print_matrix(matrix, msg='Lowest cost through this matrix:')
     total = 0
     for row, column in indexes:
         value = matrix[row][column]
@@ -209,7 +209,7 @@ So, the above profit-calculation program can be recast as::
     cost_matrix = make_cost_matrix(matrix, lambda cost: sys.maxint - cost)
     m = Munkres()
     indexes = m.compute(cost_matrix)
-    print_matrix('Lowest cost through this matrix:', matrix)
+    print_matrix(matrix, msg='Lowest cost through this matrix:')
     total = 0
     for row, column in indexes:
         value = matrix[row][column]
