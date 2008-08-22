@@ -1,0 +1,5 @@
+*.py	ident
+*.txt	ident
+README	ident
+CHANGELOG	ident
+*.cfg	ident
