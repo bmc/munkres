@@ -1,43 +1,45 @@
 ---
-title: pyutmp — Python interface to Unix utmp
+title: munkres — Munkres implementation for Python
 layout: withTOC
 ---
 
 ## Introduction
 
-The `pyutmp` module provides a Python-oriented interface to the *utmp* file
-on Unix-like operating systems. To paraphrase the *Linux Programmer's
-Manual* page *utmp*(5), the *utmp* file allows one to discover information
-about who is currently using (i.e., is logged into) the system. The *utmp*
-file is a series of entries whose structure is typically defined by the
-`utmp.h` C header file.
+The Munkres module provides an implementation of the Munkres algorithm
+(also called the [Hungarian algorithm][] or the Kuhn-Munkres algorithm).
+The algorithm models an assignment problem as an NxM cost matrix, where
+each element represents the cost of assigning the ith worker to the jth
+job, and it figures out the least-cost solution, choosing a single item
+from each row and column in the matrix, such that no row and no column are
+used more than once.
 
-This module provides an read-only interface to the underlying operating
-system's C *utmp* API.
+[Hungarian algorithm]: http://en.wikipedia.org/wiki/Hungarian_algorithm
 
-## Getting and installing *pyutmp*
+## Getting and installing *munkres*
 
-*pyutmp* relies on the presence of the *utmp* library, which
-isn't automatically present on all operating systems. In addition, *pyutmp*
-uses [Cython][]-generated C files to provide Python access to the C *utmp*
-libraries.
+### Installing via EasyInstall
 
-It is impractical to provide binaries of *pyutmp* for every combination of
-Unix-like operating system and operating system release. So, currently, you
-must build *pyutmp* from source code, as described below.
+Because *munkres* is available via [PyPI][], if you have [EasyInstall][]
+installed on your system, installing *munkres* is as easy as running this
+command (usually as `root` or the system administrator):
 
-First, obtain the source code. You can download the source (as a zip or
-tarball) from <http://github.com/bmc/pyutmp/downloads>, or you can make a
-local read-only clone of the [Git repository][] using one of the following
-commands:
+    easy_install munkres
 
-    $ git clone git://github.com/bmc/pyutmp.git
-    $ git clone http://github.com/bmc/pyutmp.git
+### Installing from source
 
-[Git repository]: http://github.com/bmc/pyutmp
-[Cython]: http://www.cython.org/
+You can also install *munkres* from source. Either download the source (as
+a zip or tarball) from <http://github.com/bmc/munkres/downloads>, or make
+a local read-only clone of the [Git repository][] using one of the
+following commands:
 
-Once you have a local `pyutmp` source directory, change your working directory
+    $ git clone git://github.com/bmc/munkres.git
+    $ git clone http://github.com/bmc/munkres.git
+
+[EasyInstall]: http://peak.telecommunity.com/DevCenter/EasyInstall
+[PyPI]: http://pypi.python.org/pypi
+[Git repository]: http://github.com/bmc/munkres
+
+Once you have a local `munkres` source directory, change your working directory
 to the source directory, and type:
 
     python setup.py install
@@ -47,84 +49,221 @@ home directory) type:
 
     python setup.py install --prefix=$HOME
 
-## Interface and Usage
+## The Assignment Problem
 
-The `pyutmp` module supplies two classes: `UtmpFile` and `Utmp`. A
-`UtmpFile` object represents the open *utmp* file; when you iterate over a
-`UtmpFile` object, it yields successive `Utmp` objects. For example:
+These next few sections describe the purpose of the *munkres* module in more
+detail.
 
-    from pyutmp import UtmpFile
-    import time
+Let *C* be an *n*x*n* matrix representing the costs of each of *n* workers
+to perform any of *n* jobs. The assignment problem is to assign jobs to
+workers in a way that minimizes the total cost. Since each worker can perform
+only one job and each job can be assigned to only one worker the assignments
+represent an independent set of the matrix *C*.
 
-    for utmp in UtmpFile():
-        # utmp is a Utmp object
-        if utmp.ut_user_process:
-            print '%s logged in at %s on tty %s' % (utmp.ut_user, time.ctime(utmp.ut_time), utmp.ut_line)
+One way to generate the optimal set is to create all permutations of
+the indexes necessary to traverse the matrix so that no row and column
+are used more than once. For instance, given this matrix (expressed in
+Python):
 
-### UtmpFile
+    matrix = [[5, 9, 1],
+              [10, 3, 2],
+              [8, 7, 4]]
 
-In addition to the `__iter__()` generator method, allowing iteration over
-the contents of the *utmp* file, the `UtmpFile` class provides a `rewind()`
-method that permits you to reset the file pointer to the top of the file.
-See the class documentation for details.
+You could use this code to generate the traversal indexes:
 
-### Utmp
+    def permute(a, results):
+        if len(a) == 1:
+            results.insert(len(results), a)
 
-The fields of the `Utmp` class are operating system-dependent. However, they
-will *always* include at least the following fields:
+        else:
+            for i in range(0, len(a)):
+                element = a[i]
+                a_copy = [a[j] for j in range(0, len(a)) if j != i]
+                subresults = []
+                permute(a_copy, subresults)
+                for subresult in subresults:
+                    result = [element] + subresult
+                    results.insert(len(results), result)
 
-* `ut_user` (string): The user associated with the *utmp* entry, if any.
-* `ut_line` (string): The tty or pseudo-tty associated with the entry, if any.
-  In this API, the line will *always* be the full path to the device.
-* `ut_host` (string): The host name associated with the entry, if any.
-* `ut_time` (timestamp:) The timestamp associated with the entry. This timestamp
-  is in the form returnd by `time.time()` and may be passed directly to methods
-  like `time.ctime()`.
-* `ut_user_process` (bool): Whether or not the *utmp* entry is a user process
-  (as opposed to a reboot or some other system event). 
+    results = []
+    permute(range(len(matrix)), results) # [0, 1, 2] for a 3x3 matrix
 
-On some operating systems, other fields may be present. For instance, on
-Linux and Solaris systems (and other System V-derived systems), `Utmp` also
-contains the following fields:
+After the call to permute(), the results matrix would look like this:
 
-* `ut_type` (string): The type of the entry, typically one of the following 
-  string values. See the *utmp*(5) manual page for a description of these
-  strings.
-    * "RUN_LVL"
-    * "BOOT_TIME"
-    * "NEW_TIME"
-    * "OLD_TIME"
-    * "INIT_PROCESS" 
-    * "LOGIN_PROCESS"
-    * "USER_PROCESS"
-    * "DEAD_PROCESS"
-    * "ACCOUNTING".          
-* `ut_pid` (int): The associated process ID, if any.
-* `ut_id` (string): The *init*(8) ID, or the abbreviated tty name.
-* `ut_exit_code` (int): The process exit code, if applicable.
-* `ut_session` (int): Session ID, for windowing.
-* `ut_addr` (int array): IPv4 address of remote host (if applicable), one
-  octet per array element.
+    [[0, 1, 2],
+     [0, 2, 1],
+     [1, 0, 2],
+     [1, 2, 0],
+     [2, 0, 1],
+     [2, 1, 0]]
 
-If you're writing portable code, you should not count on the presence of
-this secont set of attributes--or, at the very least, you should wrap
-access to them in a `try/catch` block that catches `AttributeError`.
+You could then use that index matrix to loop over the original cost matrix
+and calculate the smallest cost of the combinations:
 
-## Notes
+    n = len(matrix)
+    minval = sys.maxint
+    for row in range(n):
+        cost = 0
+        for col in range(n):
+            cost += matrix[row][col]
+        minval = min(cost, minval)
 
-This module has been tested on the following operating systems:
+    print minval
 
-* Ubuntu Linux, version 8.04
-* FreeBSD
-* Mac OS X 10.4 (Tiger)
-* OpenSolaris (2008.05, x86, using the SunStudio 12 compiler suite)
+While this approach works fine for small matrices, it does not scale. It
+executes in O(*n*!) time: Calculating the permutations for an *n*x*n*
+matrix requires *n*! operations. For a 12x12 matrix, that's 479,001,600
+traversals. Even if you could manage to perform each traversal in just one
+millisecond, it would still take more than 133 hours to perform the entire
+traversal. A 20x20 matrix would take 2,432,902,008,176,640,000 operations. At
+an optimistic millisecond per operation, that's more than 77 million years.
 
-Adding support for other Unix variants should be straightforward.
+The Munkres algorithm runs in O(*n*^3) time, rather than O(*n*!). This
+package provides an implementation of that algorithm, based on the
+algorithm outlined at
+<http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html>.
 
-## Restrictions
+This version was written for Python by Brian Clapper from the (Ada) algorithm
+at the above web site. (The ``Algorithm::Munkres`` Perl version, in CPAN, was
+clearly adapted from the same web site.)
 
-- Access to the *utmp* file is read-only. There is no provision for writing
-  to the file.
+### Usage
+
+Construct a Munkres object:
+
+    from munkres import Munkres
+
+    m = Munkres()
+
+Then use it to compute the lowest cost assignment from a cost matrix. Here's
+a sample program:
+
+    from munkres import Munkres, print_matrix
+
+    matrix = [[5, 9, 1],
+              [10, 3, 2],
+              [8, 7, 4]]
+    m = Munkres()
+    indexes = m.compute(matrix)
+    print_matrix(matrix, msg='Lowest cost through this matrix:')
+    total = 0
+    for row, column in indexes:
+        value = matrix[row][column]
+        total += value
+        print '(%d, %d) -> %d' % (row, column, value)
+    print 'total cost: %d' % total
+
+Running that program produces:
+
+    Lowest cost through this matrix:
+    [5, 9, 1]
+    [10, 3, 2]
+    [8, 7, 4]
+    (0, 0) -> 5
+    (1, 1) -> 3
+    (2, 2) -> 4
+    total cost=12
+
+The instantiated Munkres object can be used multiple times on different
+matrices.
+
+### Non-square Cost Matrices
+
+The Munkres algorithm assumes that the cost matrix is square. However, it's
+possible to use a rectangular matrix if you first pad it with 0 values to make
+it square. This module automatically pads rectangular cost matrices to make
+them square.
+
+Notes:
+
+- The module operates on a *copy* of the caller's matrix, so any padding will
+  not be seen by the caller.
+- The cost matrix must be rectangular or square. An irregular matrix will
+  *not* work.
+
+### Calculating Profit, Rather than Cost
+
+The cost matrix is just that: a cost matrix. The Munkres algorithm finds
+the combination of elements (one from each row and column) that results in
+the smallest cost. It's also possible to use the algorithm to maximize
+profit. To do that, however, you have to convert your profit matrix to a
+cost matrix. The simplest way to do that is to subtract all elements from a
+large value. For example:
+
+    from munkres import Munkres, print_matrix
+
+    matrix = [[5, 9, 1],
+              [10, 3, 2],
+              [8, 7, 4]]
+    cost_matrix = []
+    for row in matrix:
+        cost_row = []
+        for col in row:
+            cost_row += [sys.maxint - col]
+        cost_matrix += [cost_row]
+
+    m = Munkres()
+    indexes = m.compute(cost_matrix)
+    print_matrix(matrix, msg='Lowest cost through this matrix:')
+    total = 0
+    for row, column in indexes:
+        value = matrix[row][column]
+        total += value
+        print '(%d, %d) -> %d' % (row, column, value)
+
+    print 'total profit=%d' % total
+
+Running that program produces:
+
+    Highest profit through this matrix:
+    [5, 9, 1]
+    [10, 3, 2]
+    [8, 7, 4]
+    (0, 1) -> 9
+    (1, 0) -> 10
+    (2, 2) -> 4
+    total profit=23
+
+The ``munkres`` module provides a convenience method for creating a cost
+matrix from a profit matrix. Since it doesn't know whether the matrix contains
+floating point numbers, decimals, or integers, you have to provide the
+conversion function; but the convenience method takes care of the actual
+creation of the cost matrix:
+
+    import munkres
+
+    cost_matrix = munkres.make_cost_matrix(matrix,
+                                           lambda cost: sys.maxint - cost)
+
+So, the above profit-calculation program can be recast as:
+
+    from munkres import Munkres, print_matrix, make_cost_matrix
+
+    matrix = [[5, 9, 1],
+              [10, 3, 2],
+              [8, 7, 4]]
+    cost_matrix = make_cost_matrix(matrix, lambda cost: sys.maxint - cost)
+    m = Munkres()
+    indexes = m.compute(cost_matrix)
+    print_matrix(matrix, msg='Lowest cost through this matrix:')
+    total = 0
+    for row, column in indexes:
+        value = matrix[row][column]
+        total += value
+        print '(%d, %d) -> %d' % (row, column, value)
+    print 'total profit=%d' % total
+
+### References
+
+1. <http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html>
+2. Harold W. Kuhn. The Hungarian Method for the assignment problem.
+   *Naval Research Logistics Quarterly*, 2:83-97, 1955.
+3. Harold W. Kuhn. Variants of the Hungarian method for assignment
+   problems. *Naval Research Logistics Quarterly*, 3: 253-258, 1956.
+4. Munkres, J. Algorithms for the Assignment and Transportation Problems.
+   *Journal of the Society of Industrial and Applied Mathematics*,
+   5(1):32-38, March, 1957.
+5. <http://en.wikipedia.org/wiki/Hungarian_algorithm>
 
 ## License
 
