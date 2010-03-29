@@ -1,7 +1,7 @@
 {% include header.html %}
 
-<script type="text/javascript">
-{% include toc.js %}
+<script type="text/javascript" src="http://bmc.github.com/js/toc.js">
+<!-- -->
 </script>
 
 <div id="content" class="site">
@@ -14,5 +14,9 @@
 {{ content }}
 
 </div>
+
+<script type="text/javascript">
+createTOC();
+</script>
 
 {% include footer.html %}
