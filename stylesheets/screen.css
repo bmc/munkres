@@ -37,7 +37,9 @@ pre
     margin-left: 3em;
     /* background-color: #e0e0e0; */
     padding: 10px;
-    width: auto;
+    width: 85%;
+    background-color:#edf6fc;
+    border: 1px dashed #666;
 }
 
 div#toc
