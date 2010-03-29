@@ -1,0 +1,165 @@
+body
+{
+    border-left: 5em;
+    border-right: 5em;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Verdana, Helvetica, sans-serif;
+}
+
+h2
+{
+}
+
+h3
+{
+}
+
+h4
+{ 
+    text-decoration: underline;
+}
+
+h5
+{ 
+    font-style: italic;
+    text-decoration: underline;
+}
+
+h6
+{ 
+    font-style: italic;
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+div.site
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: white;
+    padding: 10px;
+}
+
+div.header
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: white;
+}
+
+span.title
+{
+    font-size: 18pt;
+    font-family: Arial, Verdana, Helvetica, sans-serif;
+    font-weight: bold;
+    font-style: italic;
+}
+
+table.banner
+{
+    width: 100%;
+}
+
+table.banner td.banner-image
+{
+    padding-left: 0;
+    padding-right: 1em;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+table.banner td.banner-title
+{
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+div.linktabs
+{
+    float: right;
+    background-color: white;
+}
+
+.linktabs
+{
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.linktab
+{
+    background-color: #aaaaaa;
+    color: white;
+    border-left: 1px solid #999999;
+    border-right: 1px solid #999999;
+    border-bottom: 1px solid #999999;
+    border-top: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 2px;
+    padding-top: 0;
+    margin: 0;
+    text-align: center;
+    width: auto;
+}
+
+hr
+{
+    height: 1px;
+    border: 0;
+    color: #999999;
+    background-color: #999999;
+}
+
+.linktab a
+{
+    text-decoration: none;
+    color: white;
+}
+
+p
+{
+}
+
+div.byline
+{
+    margin-top: 1em;
+    text-align: right;
+}
+
+span.author
+{
+}
+
+span.email
+{
+    font-style: italic;
+}
+
+pre
+{
+    margin-left: 3em;
+    background-color: #e0e0e0;
+    padding: 10px;
+    width: auto;
+}
+
+
+ul
+{
+}
+
+ol
+{
+}
+
+div#license p
+{
+    margin-left: 0em;
+}
