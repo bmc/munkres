@@ -15,7 +15,7 @@ used more than once.
 
 See the docs in munkres.py and the [home page][] for more details.
 
-[home page]: http://bmc.github.com/munkres/
+[home page]: http://software.clapper.org/munkres/
 
 ## Copyright
 
