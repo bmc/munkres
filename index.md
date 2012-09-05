@@ -255,7 +255,7 @@ So, the above profit-calculation program can be recast as:
 
 ### References
 
-1. <http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html>
+1. <http://csclab.murraystate.edu/bob.pilgrim/445/munkres.html>
 2. Harold W. Kuhn. The Hungarian Method for the assignment problem.
    *Naval Research Logistics Quarterly*, 2:83-97, 1955.
 3. Harold W. Kuhn. Variants of the Hungarian method for assignment
