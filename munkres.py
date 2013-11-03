@@ -61,7 +61,7 @@ You could then use that index matrix to loop over the original cost matrix
 and calculate the smallest cost of the combinations::
 
     n = len(matrix)
-    minval = sys.maxint
+    minval = sys.maxsize
     for row in range(n):
         cost = 0
         for col in range(n):
@@ -163,7 +163,7 @@ large value. For example::
     for row in matrix:
         cost_row = []
         for col in row:
-            cost_row += [sys.maxint - col]
+            cost_row += [sys.maxsize - col]
         cost_matrix += [cost_row]
 
     m = Munkres()
@@ -197,7 +197,7 @@ creation of the cost matrix::
     import munkres
 
     cost_matrix = munkres.make_cost_matrix(matrix,
-                                           lambda cost: sys.maxint - cost)
+                                           lambda cost: sys.maxsize - cost)
 
 So, the above profit-calculation program can be recast as::
 
@@ -206,7 +206,7 @@ So, the above profit-calculation program can be recast as::
     matrix = [[5, 9, 1],
               [10, 3, 2],
               [8, 7, 4]]
-    cost_matrix = make_cost_matrix(matrix, lambda cost: sys.maxint - cost)
+    cost_matrix = make_cost_matrix(matrix, lambda cost: sys.maxsize - cost)
     m = Munkres()
     indexes = m.compute(cost_matrix)
     print_matrix(matrix, msg='Lowest cost through this matrix:')
@@ -290,7 +290,7 @@ __all__     = ['Munkres', 'make_cost_matrix']
 # ---------------------------------------------------------------------------
 
 # Info about the module
-__version__   = "1.0.5.4"
+__version__   = "1.0.6"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://software.clapper.org/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
@@ -576,7 +576,7 @@ class Munkres:
 
     def __find_smallest(self):
         """Find the smallest uncovered value in the matrix."""
-        minval = sys.maxint
+        minval = sys.maxsize
         for i in range(self.n):
             for j in range(self.n):
                 if (not self.row_covered[i]) and (not self.col_covered[j]):
@@ -691,7 +691,7 @@ def make_cost_matrix(profit_matrix, inversion_function):
 
     .. python::
 
-        cost_matrix = Munkres.make_cost_matrix(matrix, lambda x : sys.maxint - x)
+        cost_matrix = Munkres.make_cost_matrix(matrix, lambda x : sys.maxsize - x)
 
     :Parameters:
         profit_matrix : list of lists
@@ -747,36 +747,31 @@ def print_matrix(matrix, msg=None):
 
 if __name__ == '__main__':
 
-
     matrices = [
         # Square
         ([[400, 150, 400],
           [400, 450, 600],
           [300, 225, 300]],
-         850 # expected cost
-        ),
+         850),  # expected cost
 
         # Rectangular variant
         ([[400, 150, 400, 1],
           [400, 450, 600, 2],
           [300, 225, 300, 3]],
-         452 # expected cost
-        ),
+         452),  # expected cost
+
 
         # Square
         ([[10, 10,  8],
-          [ 9,  8,  1],
-          [ 9,  7,  4]],
-         18
-        ),
+          [9,  8,  1],
+          [9,  7,  4]],
+         18),
 
         # Rectangular variant
         ([[10, 10,  8, 11],
-          [ 9,  8,  1, 1],
-          [ 9,  7,  4, 10]],
-         15
-        ),
-        ]
+          [9,  8,  1, 1],
+          [9,  7,  4, 10]],
+         15)]
 
     m = Munkres()
     for cost_matrix, expected_total in matrices:
