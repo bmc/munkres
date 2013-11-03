@@ -277,6 +277,7 @@ __docformat__ = 'restructuredtext'
 # ---------------------------------------------------------------------------
 
 import sys
+import copy
 
 # ---------------------------------------------------------------------------
 # Exports
@@ -458,8 +459,8 @@ class Munkres:
         for i in range(n):
             for j in range(n):
                 if (self.C[i][j] == 0) and \
-                   (not self.col_covered[j]) and \
-                   (not self.row_covered[i]):
+                        (not self.col_covered[j]) and \
+                        (not self.row_covered[i]):
                     self.marked[i][j] = 1
                     self.col_covered[j] = True
                     self.row_covered[i] = True
@@ -595,8 +596,8 @@ class Munkres:
             j = 0
             while True:
                 if (self.C[i][j] == 0) and \
-                   (not self.row_covered[i]) and \
-                   (not self.col_covered[j]):
+                        (not self.row_covered[i]) and \
+                        (not self.col_covered[j]):
                     row = i
                     col = j
                     done = True
@@ -721,7 +722,7 @@ def print_matrix(matrix, msg=None):
     import math
 
     if msg is not None:
-        print msg
+        print(msg)
 
     # Calculate the appropriate format width.
     width = 0
@@ -748,34 +749,34 @@ if __name__ == '__main__':
 
 
     matrices = [
-                # Square
-                ([[400, 150, 400],
-                  [400, 450, 600],
-                  [300, 225, 300]],
-                 850 # expected cost
-                ),
+        # Square
+        ([[400, 150, 400],
+          [400, 450, 600],
+          [300, 225, 300]],
+         850 # expected cost
+        ),
 
-                # Rectangular variant
-                ([[400, 150, 400, 1],
-                  [400, 450, 600, 2],
-                  [300, 225, 300, 3]],
-                 452 # expected cost
-                ),
+        # Rectangular variant
+        ([[400, 150, 400, 1],
+          [400, 450, 600, 2],
+          [300, 225, 300, 3]],
+         452 # expected cost
+        ),
 
-                # Square
-                ([[10, 10,  8],
-                  [ 9,  8,  1],
-                  [ 9,  7,  4]],
-                 18
-                ),
+        # Square
+        ([[10, 10,  8],
+          [ 9,  8,  1],
+          [ 9,  7,  4]],
+         18
+        ),
 
-                # Rectangular variant
-                ([[10, 10,  8, 11],
-                  [ 9,  8,  1, 1],
-                  [ 9,  7,  4, 10]],
-                 15
-                ),
-               ]
+        # Rectangular variant
+        ([[10, 10,  8, 11],
+          [ 9,  8,  1, 1],
+          [ 9,  7,  4, 10]],
+         15
+        ),
+        ]
 
     m = Munkres()
     for cost_matrix, expected_total in matrices:
@@ -785,7 +786,6 @@ if __name__ == '__main__':
         for r, c in indexes:
             x = cost_matrix[r][c]
             total_cost += x
-            print '(%d, %d) -> %d' % (r, c, x)
-        print 'lowest cost=%d' % total_cost
+            print('(%d, %d) -> %d' % (r, c, x))
+        print('lowest cost=%d' % total_cost)
         assert expected_total == total_cost
-
