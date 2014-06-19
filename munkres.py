@@ -278,6 +278,7 @@ __docformat__ = 'restructuredtext'
 
 import sys
 import copy
+import numpy as np
 
 # ---------------------------------------------------------------------------
 # Exports
@@ -317,6 +318,7 @@ class Munkres:
         self.marked = None
         self.path = None
 
+
     def make_cost_matrix(profit_matrix, inversion_function):
         """
         **DEPRECATED**
@@ -342,25 +344,15 @@ class Munkres:
         :rtype: list of lists
         :return: a new, possibly padded, matrix
         """
-        max_columns = 0
-        total_rows = len(matrix)
 
-        for row in matrix:
-            max_columns = max(max_columns, len(row))
+        num_rows, num_cols = matrix.shape
 
-        total_rows = max(max_columns, total_rows)
+        n = max(num_rows, num_cols)
 
-        new_matrix = []
-        for row in matrix:
-            row_len = len(row)
-            new_row = row[:]
-            if total_rows > row_len:
-                # Row too short. Pad it.
-                new_row += [0] * (total_rows - row_len)
-            new_matrix += [new_row]
-
-        while len(new_matrix) < total_rows:
-            new_matrix += [[0] * total_rows]
+        new_matrix = np.zeros((n, n))
+        for i, row in enumerate(matrix):
+            # for a 1D numpy array, row.size is ~10% faster than row.shape[0]
+            new_matrix[i, :row.size] = row
 
         return new_matrix
 
@@ -371,7 +363,7 @@ class Munkres:
         that can be used to traverse the matrix.
 
         :Parameters:
-            cost_matrix : list of lists
+            cost_matrix : list of lists or Numpy array
                 The cost matrix. If this cost matrix is not square, it
                 will be padded with zeros, via a call to ``pad_matrix()``.
                 (This method does *not* modify the caller's matrix. It
@@ -385,16 +377,22 @@ class Munkres:
                  cost path through the matrix
 
         """
+        cost_matrix = np.array(cost_matrix)
+
         self.C = self.pad_matrix(cost_matrix)
-        self.n = len(self.C)
-        self.original_length = len(cost_matrix)
-        self.original_width = len(cost_matrix[0])
-        self.row_covered = [False for i in range(self.n)]
-        self.col_covered = [False for i in range(self.n)]
+        self.n = self.C.shape[0]
+        self.original_length, self.original_width = cost_matrix.shape
+
+        self.row_covered = np.zeros(self.n, dtype=bool)
+        self.col_covered = np.zeros(self.n, dtype=bool)
         self.Z0_r = 0
         self.Z0_c = 0
-        self.path = self.__make_matrix(self.n * 2, 0)
-        self.marked = self.__make_matrix(self.n, 0)
+
+        # I removed the make_matrix function because we only ever make
+        # matrices with zeros. Knowing this, using the np.zeros function
+        # cuts the time in half
+        self.path = np.zeros((self.n * 2, self.n * 2))
+        self.marked = np.zeros((self.n, self.n))
 
         done = False
         step = 1
@@ -406,46 +404,25 @@ class Munkres:
                   5 : self.__step5,
                   6 : self.__step6 }
 
-        while not done:
-            try:
-                func = steps[step]
-                step = func()
-            except KeyError:
-                done = True
 
-        # Look for the starred columns
-        results = []
-        for i in range(self.original_length):
-            for j in range(self.original_width):
-                if self.marked[i][j] == 1:
-                    results += [(i, j)]
+        while step < 7:
+            func = steps[step]
+            step = func()
 
-        return results
+        ones = np.where(self.marked[:self.original_length, :self.original_width]==1)
 
-    def __copy_matrix(self, matrix):
-        """Return an exact copy of the supplied matrix"""
-        return copy.deepcopy(matrix)
-
-    def __make_matrix(self, n, val):
-        """Create an *n*x*n* matrix, populating it with the specific value."""
-        matrix = []
-        for i in range(n):
-            matrix += [[val for j in range(n)]]
-        return matrix
+        return zip(*ones)
 
     def __step1(self):
         """
         For each row of the matrix, find the smallest element and
         subtract it from every element in its row. Go to Step 2.
         """
-        C = self.C
-        n = self.n
-        for i in range(n):
-            minval = min(self.C[i])
-            # Find the minimum value for this row and subtract that minimum
-            # from every element in the row.
-            for j in range(n):
-                self.C[i][j] -= minval
+
+        # Find the minimum value for this row and subtract that minimum
+        # from every element in the row.
+        for row in self.C:
+            row -= np.min(row)
 
         return 2
 
@@ -455,15 +432,14 @@ class Munkres:
         zero in its row or column, star Z. Repeat for each element in the
         matrix. Go to Step 3.
         """
-        n = self.n
-        for i in range(n):
-            for j in range(n):
-                if (self.C[i][j] == 0) and \
-                        (not self.col_covered[j]) and \
-                        (not self.row_covered[i]):
-                    self.marked[i][j] = 1
-                    self.col_covered[j] = True
-                    self.row_covered[i] = True
+
+        zeros = zip(*np.where(self.C == 0))
+        for (i, j) in zeros:
+            if (not self.row_covered[i]) and (not self.col_covered[j]):
+                self.marked[i][j] = 1
+                self.row_covered[i] = True
+                self.col_covered[j] = True
+
 
         self.__clear_covers()
         return 3
@@ -474,20 +450,16 @@ class Munkres:
         covered, the starred zeros describe a complete set of unique
         assignments. In this case, Go to DONE, otherwise, Go to Step 4.
         """
-        n = self.n
-        count = 0
-        for i in range(n):
-            for j in range(n):
-                if self.marked[i][j] == 1:
-                    self.col_covered[j] = True
-                    count += 1
 
-        if count >= n:
-            step = 7 # done
+        rows, cols = np.where(self.marked == 1)
+        for j in cols:
+            self.col_covered[j] = True
+        count = np.sum(self.col_covered)
+
+        if count >= self.n:
+            return 7 # done
         else:
-            step = 4
-
-        return step
+            return 4
 
     def __step4(self):
         """
@@ -497,30 +469,23 @@ class Munkres:
         zero. Continue in this manner until there are no uncovered zeros
         left. Save the smallest uncovered value and Go to Step 6.
         """
-        step = 0
-        done = False
-        row = -1
-        col = -1
-        star_col = -1
-        while not done:
+
+        while True:
             (row, col) = self.__find_a_zero()
             if row < 0:
-                done = True
-                step = 6
-            else:
-                self.marked[row][col] = 2
-                star_col = self.__find_star_in_row(row)
-                if star_col >= 0:
-                    col = star_col
-                    self.row_covered[row] = True
-                    self.col_covered[col] = False
-                else:
-                    done = True
-                    self.Z0_r = row
-                    self.Z0_c = col
-                    step = 5
+                return 6
 
-        return step
+            self.marked[row][col] = 2
+            star_col = self.__find_star_in_row(row)
+
+            if star_col >= 0:
+                col = star_col
+                self.row_covered[row] = True
+                self.col_covered[col] = False
+            else:
+                self.Z0_r = row
+                self.Z0_c = col
+                return 5
 
     def __step5(self):
         """
@@ -537,26 +502,24 @@ class Munkres:
         path = self.path
         path[count][0] = self.Z0_r
         path[count][1] = self.Z0_c
-        done = False
-        while not done:
+
+        while True:
             row = self.__find_star_in_col(path[count][1])
-            if row >= 0:
-                count += 1
-                path[count][0] = row
-                path[count][1] = path[count-1][1]
-            else:
-                done = True
 
-            if not done:
-                col = self.__find_prime_in_row(path[count][0])
-                count += 1
-                path[count][0] = path[count-1][0]
-                path[count][1] = col
+            if row < 0:
+                self.__convert_path(path, count)
+                self.__clear_covers()
+                self.__erase_primes()
+                return 3
 
-        self.__convert_path(path, count)
-        self.__clear_covers()
-        self.__erase_primes()
-        return 3
+            count += 1
+            path[count][0] = row
+            path[count][1] = path[count-1][1]
+
+            col = self.__find_prime_in_row(path[count][0])
+            count += 1
+            path[count][0] = path[count-1][0]
+            path[count][1] = col
 
     def __step6(self):
         """
@@ -566,88 +529,75 @@ class Munkres:
         lines.
         """
         minval = self.__find_smallest()
-        for i in range(self.n):
-            for j in range(self.n):
-                if self.row_covered[i]:
-                    self.C[i][j] += minval
-                if not self.col_covered[j]:
-                    self.C[i][j] -= minval
+        self.C[self.row_covered, :] += minval
+        self.C[:, np.logical_not(self.col_covered)] -= minval
+
         return 4
 
     def __find_smallest(self):
         """Find the smallest uncovered value in the matrix."""
-        minval = sys.maxsize
-        for i in range(self.n):
-            for j in range(self.n):
-                if (not self.row_covered[i]) and (not self.col_covered[j]):
-                    if minval > self.C[i][j]:
-                        minval = self.C[i][j]
-        return minval
+
+        uncovered_rows = np.logical_not(self.row_covered)
+        uncovered_cols = np.logical_not(self.col_covered)
+        uncovered_matrix = self.C[uncovered_rows, :][:, uncovered_cols]
+        if uncovered_matrix.size > 0:
+            return np.min(uncovered_matrix)
+        return sys.maxsize
 
     def __find_a_zero(self):
-        """Find the first uncovered element with value 0"""
-        row = -1
-        col = -1
-        i = 0
-        n = self.n
-        done = False
+        """Find the first uncovered element with value 0
 
-        while not done:
-            j = 0
-            while True:
-                if (self.C[i][j] == 0) and \
-                        (not self.row_covered[i]) and \
-                        (not self.col_covered[j]):
-                    row = i
-                    col = j
-                    done = True
-                j += 1
-                if j >= n:
-                    break
-            i += 1
-            if i >= n:
-                done = True
+        """
 
-        return (row, col)
+        uncovered_rows = np.logical_not(self.row_covered)
+        uncovered_cols = np.logical_not(self.col_covered)
+        uncovered_matrix = self.C[uncovered_rows][:, uncovered_cols]
+        zeros = zip(*np.where(uncovered_matrix == 0))
+
+        if len(zeros) > 0:
+            _r, _c = zeros[0]
+            row = np.where(uncovered_rows)[0][_r]
+            col = np.where(uncovered_cols)[0][_c]
+            return (row, col)
+        return (-1, -1)
+
 
     def __find_star_in_row(self, row):
         """
         Find the first starred element in the specified row. Returns
         the column index, or -1 if no starred element was found.
-        """
-        col = -1
-        for j in range(self.n):
-            if self.marked[row][j] == 1:
-                col = j
-                break
 
-        return col
+        """
+        ones = np.where(self.marked[row]==1)[0]
+        if ones.size > 0:
+            return ones[0]
+        return -1
+
+
 
     def __find_star_in_col(self, col):
         """
         Find the first starred element in the specified row. Returns
         the row index, or -1 if no starred element was found.
-        """
-        row = -1
-        for i in range(self.n):
-            if self.marked[i][col] == 1:
-                row = i
-                break
 
-        return row
+        """
+        ones = np.where(self.marked[:, col]==1)[0]
+        if ones.size > 0:
+            return ones[0]
+
+        return -1
+
 
     def __find_prime_in_row(self, row):
         """
         Find the first prime element in the specified row. Returns
         the column index, or -1 if no starred element was found.
-        """
-        col = -1
-        for j in range(self.n):
-            if self.marked[row][j] == 2:
-                col = j
-                break
 
-        return col
+        """
+        twos = np.where(self.marked[row]==2)[0]
+        if twos.size > 0:
+            return twos[0]
+        return -1
 
     def __convert_path(self, path, count):
         for i in range(count+1):
@@ -658,16 +608,12 @@ class Munkres:
 
     def __clear_covers(self):
         """Clear all covered matrix cells"""
-        for i in range(self.n):
-            self.row_covered[i] = False
-            self.col_covered[i] = False
+        self.row_covered.fill(False)
+        self.col_covered.fill(False)
 
     def __erase_primes(self):
         """Erase all prime markings"""
-        for i in range(self.n):
-            for j in range(self.n):
-                if self.marked[i][j] == 2:
-                    self.marked[i][j] = 0
+        self.marked[self.marked==2] = 0
 
 # ---------------------------------------------------------------------------
 # Functions
@@ -703,10 +649,7 @@ def make_cost_matrix(profit_matrix, inversion_function):
     :rtype: list of lists
     :return: The converted matrix
     """
-    cost_matrix = []
-    for row in profit_matrix:
-        cost_matrix.append([inversion_function(value) for value in row])
-    return cost_matrix
+    return inversion_func(matrix)
 
 def print_matrix(matrix, msg=None):
     """
@@ -719,27 +662,7 @@ def print_matrix(matrix, msg=None):
         msg : str
             Optional message to print before displaying the matrix
     """
-    import math
-
-    if msg is not None:
-        print(msg)
-
-    # Calculate the appropriate format width.
-    width = 0
-    for row in matrix:
-        for val in row:
-            width = max(width, int(math.log10(val)) + 1)
-
-    # Make the format string
-    format = '%%%dd' % width
-
-    # Print the matrix
-    for row in matrix:
-        sep = '['
-        for val in row:
-            sys.stdout.write(sep + format % val)
-            sep = ', '
-        sys.stdout.write(']\n')
+    print matrix
 
 # ---------------------------------------------------------------------------
 # Main
