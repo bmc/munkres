@@ -209,7 +209,7 @@ So, the above profit-calculation program can be recast as::
     cost_matrix = make_cost_matrix(matrix, lambda cost: sys.maxsize - cost)
     m = Munkres()
     indexes = m.compute(cost_matrix)
-    print_matrix(matrix, msg='Lowest cost through this matrix:')
+    print_matrix(matrix, msg='Highest profit through this matrix:')
     total = 0
     for row, column in indexes:
         value = matrix[row][column]
