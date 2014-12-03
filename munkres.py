@@ -356,11 +356,11 @@ class Munkres:
             new_row = row[:]
             if total_rows > row_len:
                 # Row too short. Pad it.
-                new_row += [0] * (total_rows - row_len)
+                new_row += [pad_value] * (total_rows - row_len)
             new_matrix += [new_row]
 
         while len(new_matrix) < total_rows:
-            new_matrix += [[0] * total_rows]
+            new_matrix += [[pad_value] * total_rows]
 
         return new_matrix
 
