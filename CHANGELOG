@@ -1,3 +1,22 @@
+1.0.7 (December, 2014)
+
+Fix from Stephan Porz (s.porz /at/ uni-bonn.de)
+
+- Fix pad_matrix: pad_value now actually used
+
+---------------------------------------------------------------------------
+
+1.0.6 (December, 2013)
+
+Fixes from Markus Padourek (markus.padourek /at/ gmail.com):
+- sys.maxsize fix and bump to 1.0.6
+- Updated to Python 3.x 
+
+commit 8ebed59
+Author: Markus Padourek <markus.padourek@gmail.com>
+Date: Sat Nov 2 21:27:48 2013 -0400
+
+  Updated munkres to python 3.x
 
 ---------------------------------------------------------------------------
 
