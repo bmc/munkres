@@ -189,8 +189,9 @@ Running that program produces::
     total profit=23
 
 The ``munkres`` module provides a convenience method for creating a cost
-matrix from a profit matrix. Since it doesn't know whether the matrix contains
-floating point numbers, decimals, or integers, you have to provide the
+matrix from a profit matrix. By default, it calculates the maximum profit
+and subtracts every profit from it to obtain a cost. If, however, you
+need a more general function, you can provide the
 conversion function; but the convenience method takes care of the actual
 creation of the cost matrix::
 
@@ -206,10 +207,10 @@ So, the above profit-calculation program can be recast as::
     matrix = [[5, 9, 1],
               [10, 3, 2],
               [8, 7, 4]]
-    cost_matrix = make_cost_matrix(matrix, lambda cost: sys.maxsize - cost)
+    cost_matrix = make_cost_matrix(matrix)
     m = Munkres()
     indexes = m.compute(cost_matrix)
-    print_matrix(matrix, msg='Lowest cost through this matrix:')
+    print_matrix(matrix, msg='Highest profits through this matrix:')
     total = 0
     for row, column in indexes:
         value = matrix[row][column]
@@ -673,13 +674,14 @@ class Munkres:
 # Functions
 # ---------------------------------------------------------------------------
 
-def make_cost_matrix(profit_matrix, inversion_function):
+def make_cost_matrix(profit_matrix, inversion_function=None):
     """
     Create a cost matrix from a profit matrix by calling
     'inversion_function' to invert each value. The inversion
     function must take one numeric argument (of any type) and return
     another numeric argument which is presumed to be the cost inverse
-    of the original profit.
+    of the original profit. In case the inversion function is not provided,
+    calculate it as max(matrix) - matrix.
 
     This is a static method. Call it like this:
 
@@ -698,11 +700,16 @@ def make_cost_matrix(profit_matrix, inversion_function):
             The matrix to convert from a profit to a cost matrix
 
         inversion_function : function
-            The function to use to invert each entry in the profit matrix
+            The function to use to invert each entry in the profit matrix.
+            In case it is not provided, calculate it as max(matrix) - matrix.
 
     :rtype: list of lists
     :return: The converted matrix
     """
+    if not inversion_function:
+      maximum = max(max(row) for row in profit_matrix)
+      inversion_function = lambda x: maximum - x
+
     cost_matrix = []
     for row in profit_matrix:
         cost_matrix.append([inversion_function(value) for value in row])
