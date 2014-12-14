@@ -197,8 +197,9 @@ creation of the cost matrix::
 
     import munkres
 
-    cost_matrix = munkres.make_cost_matrix(matrix,
-                                           lambda cost: sys.maxsize - cost)
+    cost_matrix = munkres.make_cost_matrix(
+        matrix,
+        lambda profit: 1000.0 - math.sqrt(profit))
 
 So, the above profit-calculation program can be recast as::
 
@@ -208,6 +209,9 @@ So, the above profit-calculation program can be recast as::
               [10, 3, 2],
               [8, 7, 4]]
     cost_matrix = make_cost_matrix(matrix)
+    # cost_matrix == [[5, 1, 9],
+    #                 [0, 7, 8],
+    #                 [2, 3, 6]]
     m = Munkres()
     indexes = m.compute(cost_matrix)
     print_matrix(matrix, msg='Highest profits through this matrix:')
