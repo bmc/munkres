@@ -23,4 +23,5 @@ See the docs in munkres.py and the [home page][] for more details.
 
 ## License
 
-BSD license. See accompanying LICENSE file.
+Licensed under the Apache License, Version 2.0. See
+[LICENSE](LICENSE.md) for details.
