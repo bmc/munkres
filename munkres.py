@@ -446,6 +446,7 @@ class Munkres:
                     self.marked[i][j] = 1
                     self.col_covered[j] = True
                     self.row_covered[i] = True
+                    break
 
         self.__clear_covers()
         return 3
