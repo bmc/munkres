@@ -3,7 +3,7 @@ Munkres implementation for Python
 
 ## Introduction
 
-The Munkres module provides an implementation of the Munkres algorithm
+The Munkres module provides an O(n^3) implementation of the Munkres algorithm
 (also called the [Hungarian algorithm][] or the Kuhn-Munkres algorithm).
 The algorithm models an assignment problem as an NxM cost matrix, where
 each element represents the cost of assigning the ith worker to the jth
