@@ -460,7 +460,7 @@ class Munkres:
         count = 0
         for i in range(n):
             for j in range(n):
-                if self.marked[i][j] == 1:
+                if self.marked[i][j] == 1 and not self.col_covered[j]:
                     self.col_covered[j] = True
                     count += 1
 
