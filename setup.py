@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 #
 # Distutils setup script for Munkres
-#
-# $Id$
 # ---------------------------------------------------------------------------
 
 from distutils.core import setup

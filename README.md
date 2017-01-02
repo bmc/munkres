@@ -11,6 +11,9 @@ job, and it figures out the least-cost solution, choosing a single item
 from each row and column in the matrix, such that no row and no column are
 used more than once.
 
+This particular implementation is based on 
+<http://csclab.murraystate.edu/~bob.pilgrim/445/munkres.html>.
+
 [Hungarian algorithm]: http://en.wikipedia.org/wiki/Hungarian_algorithm
 
 See the docs in munkres.py and the [home page][] for more details.

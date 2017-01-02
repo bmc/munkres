@@ -82,9 +82,9 @@ The Munkres algorithm runs in O(*n*\ ^3) time, rather than O(*n*!). This
 package provides an implementation of that algorithm.
 
 This version is based on
-http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html.
+http://csclab.murraystate.edu/~bob.pilgrim/445/munkres.html
 
-This version was written for Python by Brian Clapper from the (Ada) algorithm
+This version was written for Python by Brian Clapper from the algorithm
 at the above web site. (The ``Algorithm::Munkres`` Perl version, in CPAN, was
 clearly adapted from the same web site.)
 
@@ -272,7 +272,7 @@ __all__     = ['Munkres', 'make_cost_matrix']
 # ---------------------------------------------------------------------------
 
 # Info about the module
-__version__   = "1.0.8"
+__version__   = "1.0.9"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://software.clapper.org/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
