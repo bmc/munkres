@@ -2,12 +2,16 @@
 
 Version 1.0.9 (Jan, 2017)
 
-- Fixed URL to original implementation. Addresses Issue #4.
+- Fixed URL to original implementation. Addresses
+  [Issue #4](https://github.com/bmc/munkres/issues/4).
 - Fixes from @kylemcdonald:
-    - `print_matrix()` no longer crashes on 0. Fixes Issue #1.
-    - Fixed bug where step 3 could quit early. Fixes Issue #16.
+    - `print_matrix()` no longer crashes on 0. Fixes
+      [Issue #1](https://github.com/bmc/munkres/issues/4).
+    - Fixed bug where step 3 could quit early. Fixes 
+      [Issue #16](https://github.com/bmc/munkres/issues/16).
     - Added step 2 break for a small optimization.
-    - Added time bound to README. Addresses Issue #15.
+    - Added time bound to README. Addresses 
+      [Issue #15](https://github.com/bmc/munkres/issues/15).
 - Versioning will now adhere to
   [semantic version specification](http://semver.org).
 
