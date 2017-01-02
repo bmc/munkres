@@ -446,6 +446,7 @@ class Munkres:
                     self.marked[i][j] = 1
                     self.col_covered[j] = True
                     self.row_covered[i] = True
+                    break
 
         self.__clear_covers()
         return 3
@@ -460,7 +461,7 @@ class Munkres:
         count = 0
         for i in range(n):
             for j in range(n):
-                if self.marked[i][j] == 1:
+                if self.marked[i][j] == 1 and not self.col_covered[j]:
                     self.col_covered[j] = True
                     count += 1
 
@@ -710,7 +711,7 @@ def print_matrix(matrix, msg=None):
     width = 0
     for row in matrix:
         for val in row:
-            width = max(width, int(math.log10(val)) + 1)
+            width = max(width, len(str(val)))
 
     # Make the format string
     format = '%%%dd' % width
