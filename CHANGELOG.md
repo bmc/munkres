@@ -4,7 +4,7 @@ Version 1.0.9 (Jan, 2017)
 
 - Fixed URL to original implementation. Addresses
   [Issue #4](https://github.com/bmc/munkres/issues/4).
-- Fixes from @kylemcdonald:
+- Fixes from [@kylemcdonald](https://github.com/kylemcdonald):
     - `print_matrix()` no longer crashes on 0. Fixes
       [Issue #1](https://github.com/bmc/munkres/issues/4).
     - Fixed bug where step 3 could quit early. Fixes 
