@@ -82,7 +82,7 @@ The Munkres algorithm runs in O(*n*\ ^3) time, rather than O(*n*!). This
 package provides an implementation of that algorithm.
 
 This version is based on
-http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html.
+http://csclab.murraystate.edu/bob.pilgrim/445/munkres.html.
 
 This version was written for Python by Brian Clapper from the (Ada) algorithm
 at the above web site. (The ``Algorithm::Munkres`` Perl version, in CPAN, was
@@ -220,7 +220,7 @@ So, the above profit-calculation program can be recast as::
 References
 ==========
 
-1. http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html
+1. http://csclab.murraystate.edu/bob.pilgrim/445/munkres.html
 
 2. Harold W. Kuhn. The Hungarian Method for the assignment problem.
    *Naval Research Logistics Quarterly*, 2:83-97, 1955.
