@@ -1,6 +1,10 @@
 Munkres implementation for Python
 ---------------------------------
 
+<a href="https://pypi.python.org/pypi/munkres" target="_blank">
+<img src="https://img.shields.io/pypi/v/munkres.png">
+</a>
+
 ## Introduction
 
 The Munkres module provides an O(n^3) implementation of the Munkres algorithm
