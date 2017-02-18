@@ -319,6 +319,16 @@ DISALLOWED = DISALLOWED_OBJ()
 DISALLOWED_PRINTVAL = "D"
 
 # ---------------------------------------------------------------------------
+# Exceptions
+# ---------------------------------------------------------------------------
+
+class UnsolvableMatrix(Exception):
+    """
+    Exception raised for unsolvable matrices
+    """
+    pass
+
+# ---------------------------------------------------------------------------
 # Classes
 # ---------------------------------------------------------------------------
 
@@ -589,14 +599,21 @@ class Munkres:
         lines.
         """
         minval = self.__find_smallest()
+        events = 0
         for i in range(self.n):
             for j in range(self.n):
                 if self.C[i][j] is DISALLOWED:
                     continue
                 if self.row_covered[i]:
                     self.C[i][j] += minval
+                    events += 1
                 if not self.col_covered[j]:
                     self.C[i][j] -= minval
+                    events += 1
+                if self.row_covered[i] and not self.col_covered[j]:
+                    events -= 2
+        if (events == 0):
+            raise UnsolvableMatrix("Matrix cannot be solved!")
         return 4
 
     def __find_smallest(self):
