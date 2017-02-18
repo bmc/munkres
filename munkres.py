@@ -228,8 +228,8 @@ Simply use the munkres.DISALLOWED constant.
     matrix = [[5, 9, DISALLOWED],
               [10, DISALLOWED, 2],
               [8, 7, 4]]
-    cost_matrix = make_cost_matrix(matrix, lambda cost: (sys.maxsize - cost) if 
-                                           (cost is DISALLOWED) else DISALLOWED)
+    cost_matrix = make_cost_matrix(matrix, lambda cost: (sys.maxsize - cost) if
+                                          (cost != DISALLOWED) else DISALLOWED)
     m = Munkres()
     indexes = m.compute(cost_matrix)
     print_matrix(matrix, msg='Lowest cost through this matrix:')
@@ -239,6 +239,17 @@ Simply use the munkres.DISALLOWED constant.
         total += value
         print '(%d, %d) -> %d' % (row, column, value)
     print 'total profit=%d' % total
+
+Running this program produces:
+
+    Lowest cost through this matrix:
+    [ 5,  9,  D]
+    [10,  D,  2]
+    [ 8,  7,  4]
+    (0, 1) -> 9
+    (1, 0) -> 10
+    (2, 2) -> 4
+    total profit=23
 
 References
 ==========
@@ -456,8 +467,8 @@ class Munkres:
             # Find the minimum value for this row and subtract that minimum
             # from every element in the row.
             for j in range(n):
-                if self.C[i][j] is not DISALLOWED: self.C[i][j] -= minval
-
+                if self.C[i][j] is not DISALLOWED:
+                    self.C[i][j] -= minval
         return 2
 
     def __step2(self):
@@ -582,7 +593,8 @@ class Munkres:
             for j in range(self.n):
                 if self.row_covered[i]:
                     self.C[i][j] += minval
-                if not self.col_covered[j]:
+                if (not self.col_covered[j] and
+                    self.C[i][j] is not DISALLOWED):
                     self.C[i][j] -= minval
         return 4
 
