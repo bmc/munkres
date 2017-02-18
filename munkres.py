@@ -288,7 +288,7 @@ import copy
 # Exports
 # ---------------------------------------------------------------------------
 
-__all__     = ['Munkres', 'make_cost_matrix']
+__all__     = ['Munkres', 'make_cost_matrix', 'DISALLOWED']
 
 # ---------------------------------------------------------------------------
 # Globals
@@ -302,7 +302,10 @@ __copyright__ = "(c) 2008 Brian M. Clapper"
 __license__   = "Apache Software License"
 
 # Constants
-DISALLOWED = "DISALLOWED"
+class DISALLOWED_OBJ(object):
+    pass
+DISALLOWED = DISALLOWED_OBJ()
+DISALLOWED_PRINTVAL = "D"
 
 # ---------------------------------------------------------------------------
 # Classes
@@ -738,18 +741,19 @@ def print_matrix(matrix, msg=None):
     for row in matrix:
         for val in row:
             if val is DISALLOWED:
-                val = "D"
+                val = DISALLOWED_PRINTVAL
             width = max(width, len(str(val)))
 
     # Make the format string
-    format = ('%%%dd' % width)
+    format = ('%%%d' % width)
 
     # Print the matrix
     for row in matrix:
         sep = '['
         for val in row:
-            if val is DISALLOWED: formatted = "D"
-            else: formatted = (format % val)
+            if val is DISALLOWED:
+                formatted = ((format + 's') % DISALLOWED_PRINTVAL)
+            else: formatted = ((format + 'd') % val)
             sys.stdout.write(sep + formatted)
             sep = ', '
         sys.stdout.write(']\n')
@@ -791,7 +795,14 @@ if __name__ == '__main__':
           [1, 9, 12, 11],
           [DISALLOWED, 5, 4, DISALLOWED],
           [12, 12, 12, 10]],
-         20)]
+         20),
+
+        # DISALLOWED to force pairings
+        ([[1, DISALLOWED, DISALLOWED, DISALLOWED],
+          [DISALLOWED, 2, DISALLOWED, DISALLOWED],
+          [DISALLOWED, DISALLOWED, 3, DISALLOWED],
+          [DISALLOWED, DISALLOWED, DISALLOWED, 4]],
+         10)]
 
     m = Munkres()
     for cost_matrix, expected_total in matrices:
