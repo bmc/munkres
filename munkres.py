@@ -591,10 +591,11 @@ class Munkres:
         minval = self.__find_smallest()
         for i in range(self.n):
             for j in range(self.n):
+                if self.C[i][j] is DISALLOWED:
+                    continue
                 if self.row_covered[i]:
                     self.C[i][j] += minval
-                if (not self.col_covered[j] and
-                    self.C[i][j] is not DISALLOWED):
+                if not self.col_covered[j]:
                     self.C[i][j] -= minval
         return 4
 
