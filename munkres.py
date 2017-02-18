@@ -599,7 +599,7 @@ class Munkres:
         lines.
         """
         minval = self.__find_smallest()
-        events = 0
+        events = 0 # track actual changes to matrix
         for i in range(self.n):
             for j in range(self.n):
                 if self.C[i][j] is DISALLOWED:
@@ -611,7 +611,7 @@ class Munkres:
                     self.C[i][j] -= minval
                     events += 1
                 if self.row_covered[i] and not self.col_covered[j]:
-                    events -= 2
+                    events -= 2 # change reversed, no real difference
         if (events == 0):
             raise UnsolvableMatrix("Matrix cannot be solved!")
         return 4
