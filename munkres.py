@@ -217,6 +217,29 @@ So, the above profit-calculation program can be recast as::
         print '(%d, %d) -> %d' % (row, column, value)
     print 'total profit=%d' % total
 
+Disallowed Assignments
+======================
+
+You can also mark assignments in your cost or profit matrix as disallowed.
+Simply use the munkres.DISALLOWED constant.
+
+    from munkres import Munkres, print_matrix, make_cost_matrix, DISALLOWED
+
+    matrix = [[5, 9, DISALLOWED],
+              [10, DISALLOWED, 2],
+              [8, 7, 4]]
+    cost_matrix = make_cost_matrix(matrix, lambda cost: (sys.maxsize - cost) if 
+                                           (cost is DISALLOWED) else DISALLOWED)
+    m = Munkres()
+    indexes = m.compute(cost_matrix)
+    print_matrix(matrix, msg='Lowest cost through this matrix:')
+    total = 0
+    for row, column in indexes:
+        value = matrix[row][column]
+        total += value
+        print '(%d, %d) -> %d' % (row, column, value)
+    print 'total profit=%d' % total
+
 References
 ==========
 
@@ -277,6 +300,9 @@ __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://software.clapper.org/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"
 __license__   = "Apache Software License"
+
+# Constants
+DISALLOWED = "DISALLOWED"
 
 # ---------------------------------------------------------------------------
 # Classes
@@ -427,7 +453,7 @@ class Munkres:
             # Find the minimum value for this row and subtract that minimum
             # from every element in the row.
             for j in range(n):
-                self.C[i][j] -= minval
+                if self.C[i][j] is not DISALLOWED: self.C[i][j] -= minval
 
         return 2
 
@@ -711,16 +737,20 @@ def print_matrix(matrix, msg=None):
     width = 0
     for row in matrix:
         for val in row:
+            if val is DISALLOWED:
+                val = "D"
             width = max(width, len(str(val)))
 
     # Make the format string
-    format = '%%%dd' % width
+    format = ('%%%dd' % width)
 
     # Print the matrix
     for row in matrix:
         sep = '['
         for val in row:
-            sys.stdout.write(sep + format % val)
+            if val is DISALLOWED: formatted = "D"
+            else: formatted = (format % val)
+            sys.stdout.write(sep + formatted)
             sep = ', '
         sys.stdout.write(']\n')
 
@@ -754,7 +784,14 @@ if __name__ == '__main__':
         ([[10, 10,  8, 11],
           [9,  8,  1, 1],
           [9,  7,  4, 10]],
-         15)]
+         15),
+
+        # Rectangular with DISALLOWED
+        ([[4, 5, 6, DISALLOWED],
+          [1, 9, 12, 11],
+          [DISALLOWED, 5, 4, DISALLOWED],
+          [12, 12, 12, 10]],
+         20)]
 
     m = Munkres()
     for cost_matrix, expected_total in matrices:
