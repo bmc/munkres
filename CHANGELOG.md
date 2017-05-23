@@ -1,5 +1,9 @@
 # Change Log, munkres.py
 
+Version 1.0.10 (May, 2017)
+
+- Updated `setup.py` to produce a wheel.
+
 Version 1.0.9 (Jan, 2017)
 
 - Fixed URL to original implementation. Addresses

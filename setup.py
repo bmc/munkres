@@ -3,7 +3,7 @@
 # Distutils setup script for Munkres
 # ---------------------------------------------------------------------------
 
-from distutils.core import setup
+from setuptools import setup
 import re
 import os
 import sys

@@ -3,3 +3,4 @@ MANIFEST
 dist
 html
 build
+*.egg-info
