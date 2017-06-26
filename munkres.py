@@ -473,7 +473,7 @@ class Munkres:
         C = self.C
         n = self.n
         for i in range(n):
-            minval = min(self.C[i])
+            minval = min([x for x in self.C[i] if x is not DISALLOWED])
             # Find the minimum value for this row and subtract that minimum
             # from every element in the row.
             for j in range(n):
@@ -622,9 +622,10 @@ class Munkres:
         for i in range(self.n):
             for j in range(self.n):
                 if (not self.row_covered[i]) and (not self.col_covered[j]):
-                    if minval > self.C[i][j]:
+                    if self.C[i][j] is not DISALLOWED and minval > self.C[i][j]:
                         minval = self.C[i][j]
         return minval
+
 
     def __find_a_zero(self):
         """Find the first uncovered element with value 0"""
