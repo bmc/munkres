@@ -4,7 +4,9 @@ Munkres implementation for Python
 <a href="https://pypi.python.org/pypi/munkres" target="_blank">
 <img src="https://img.shields.io/pypi/v/munkres.png">
 </a>
-[![Build Status](https://travis-ci.org/bmc/munkres.svg?branch=master)](https://travis-ci.org/bmc/munkres)
+<a href="https://travis-ci.org/bmc/munkres">
+<img src="https://travis-ci.org/bmc/munkres.svg?branch=master"/>
+</a>
 
 ## Introduction
 
