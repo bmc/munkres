@@ -76,5 +76,5 @@ def test_unsolvable():
     matrix = [[5, 9, DISALLOWED],
               [10, DISALLOWED, 2],
               [DISALLOWED, DISALLOWED, DISALLOWED]]
-    _get_cost(matrix)
+    m.compute(matrix)
 
