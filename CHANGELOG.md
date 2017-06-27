@@ -2,7 +2,28 @@
 
 Version 1.0.11 (June, 2017)
 
+- Merged [Pull Request 24](https://github.com/bmc/munkres/pull/24), from
+  [@czlee](https://github.com/czlee): 
+    - Change to step 4: When it looks for a uncovered zero, rather than starting 
+      at row 0, column 0, it starts where it left off, i.e. at the last 
+      uncovered zero it found. Since it doesn't start at (0,0), when it gets to 
+      the last column it now loops around to the first, and exits unsuccessfully 
+      if it got back to where it started. This change reduces this reduces the 
+      solving time for (certain) large matrices. For instance, in tests, 
+      solving a matrix of size 394×394  goes from about 2 minutes to about 4 
+      seconds.
+    - Since Python 3 started cracking down on unnatural comparisons, the 
+      `DISALLOWED` constant added in 
+      [Pull Request 19](https://github.com/bmc/munkres/issues/19) no longer 
+      works. (It raises a TypeError for unorderable types, as is expected in 
+      Python 3.) Since this constant is meant to act like infinity, this 
+      modification just changes the two lines where it would otherwise try to 
+      make an illegal (in Python 3) comparison between a number and 
+      `DISALLOWED_OBJ()` and gets it to behave as if `DISALLOWED` is always 
+      larger.
+
 - Added Travis CI integration.
+
 - Added some unit tests. See `tests` and `tests/README.md`.
 
 Version 1.0.10 (May, 2017)
