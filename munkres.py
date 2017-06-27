@@ -472,7 +472,14 @@ class Munkres:
         C = self.C
         n = self.n
         for i in range(n):
-            minval = min([x for x in self.C[i] if x is not DISALLOWED])
+            vals = [x for x in self.C[i] if x is not DISALLOWED]
+            if len(vals) == 0:
+                # All values in this row are DISALLOWED. This matrix is
+                # unsolvable.
+                raise UnsolvableMatrix(
+                    "Row {0} is entirely DISALLOWED.".format(i)
+                )
+            minval = min(vals)
             # Find the minimum value for this row and subtract that minimum
             # from every element in the row.
             for j in range(n):
