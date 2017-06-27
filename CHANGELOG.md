@@ -1,5 +1,9 @@
 # Change Log, munkres.py
 
+Version 1.0.12 (June, 2017)
+
+- Added more tests.
+
 Version 1.0.11 (June, 2017)
 
 - Docs are now generated with [pdoc](https://github.com/BurntSushi/pdoc).

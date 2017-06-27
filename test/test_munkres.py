@@ -1,4 +1,5 @@
 from munkres import Munkres, DISALLOWED, UnsolvableMatrix
+import munkres
 from nose.tools import assert_equals, raises
 
 m = Munkres()
@@ -70,6 +71,43 @@ def test_disallowed():
               [8, DISALLOWED, 4]]
     cost = _get_cost(matrix)
     assert_equals(cost, 19)
+
+def test_profit():
+    profit_matrix = [[94, 66, 100, 18, 48],
+                     [51, 63, 97, 79, 11],
+                     [37, 53, 57, 78, 28],
+                     [59, 43, 97, 88, 48],
+                     [52, 19, 89, 60, 60]]
+    import sys
+    cost_matrix = munkres.make_cost_matrix(
+        profit_matrix, lambda cost: sys.maxsize - cost
+    )
+    indices = m.compute(cost_matrix)
+    profit = sum([profit_matrix[row][column] for row, column in indices])
+    assert_equals(profit, 392)
+
+def test_irregular():
+    matrix = [[12, 26, 17],
+              [49, 43, 36, 10, 5],
+              [97, 9, 66, 34],
+              [52, 42, 19, 36],
+              [15, 93, 55, 80]]
+
+    cost = _get_cost(matrix)
+    assert_equals(cost, 43)
+
+def test_rectangular():
+    matrix = [[34, 26, 17, 12],
+              [43, 43, 36, 10],
+              [97, 47, 66, 34],
+              [52, 42, 19, 36],
+              [15, 93, 55, 80]]
+
+    padded_matrix = m.pad_matrix(matrix, 0)
+    padded_cost = _get_cost(padded_matrix)
+    cost = _get_cost(matrix)
+    assert_equals(padded_cost, cost)
+    assert_equals(cost, 70)
 
 @raises(UnsolvableMatrix)
 def test_unsolvable():
