@@ -29,7 +29,7 @@ See the docs in munkres.py and the [home page][] for more details.
 
 ## Copyright
 
-&copy; 2008 Brian M. Clapper
+&copy; 2008-2017 Brian M. Clapper
 
 ## License
 
