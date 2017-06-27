@@ -4,3 +4,6 @@ dist
 html
 build
 *.egg-info
+/.idea
+*.iml
+__pycache__

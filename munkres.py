@@ -60,11 +60,10 @@ After the call to permute(), the results matrix would look like this::
 You could then use that index matrix to loop over the original cost matrix
 and calculate the smallest cost of the combinations::
 
-    n = len(matrix)
     minval = sys.maxsize
-    for row in range(n):
+    for indexes in results:
         cost = 0
-        for col in range(n):
+        for row, col in enumerate(indexes):
             cost += matrix[row][col]
         minval = min(cost, minval)
 
@@ -192,7 +191,7 @@ The ``munkres`` module provides a convenience method for creating a cost
 matrix from a profit matrix. Since it doesn't know whether the matrix contains
 floating point numbers, decimals, or integers, you have to provide the
 conversion function; but the convenience method takes care of the actual
-creation of the cost matrix::
+creation of the matrix::
 
     import munkres
 
@@ -306,7 +305,7 @@ __all__     = ['Munkres', 'make_cost_matrix', 'DISALLOWED']
 # ---------------------------------------------------------------------------
 
 # Info about the module
-__version__   = "1.0.10"
+__version__   = "1.0.11"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://software.clapper.org/munkres/"
 __copyright__ = "(c) 2008 Brian M. Clapper"

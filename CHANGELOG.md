@@ -1,5 +1,9 @@
 # Change Log, munkres.py
 
+Version 1.0.11 (June, 2017)
+
+- Added some unit tests. See `tests` and `tests/README.md`.
+
 Version 1.0.10 (May, 2017)
 
 - Updated `setup.py` to produce a wheel.
