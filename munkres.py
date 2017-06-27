@@ -472,7 +472,14 @@ class Munkres:
         C = self.C
         n = self.n
         for i in range(n):
-            minval = min(self.C[i])
+            vals = [x for x in self.C[i] if x is not DISALLOWED]
+            if len(vals) == 0:
+                # All values in this row are DISALLOWED. This matrix is
+                # unsolvable.
+                raise UnsolvableMatrix(
+                    "Row {0} is entirely DISALLOWED.".format(i)
+                )
+            minval = min(vals)
             # Find the minimum value for this row and subtract that minimum
             # from every element in the row.
             for j in range(n):
@@ -531,11 +538,11 @@ class Munkres:
         """
         step = 0
         done = False
-        row = -1
-        col = -1
+        row = 0
+        col = 0
         star_col = -1
         while not done:
-            (row, col) = self.__find_a_zero()
+            (row, col) = self.__find_a_zero(row, col)
             if row < 0:
                 done = True
                 step = 6
@@ -621,20 +628,21 @@ class Munkres:
         for i in range(self.n):
             for j in range(self.n):
                 if (not self.row_covered[i]) and (not self.col_covered[j]):
-                    if minval > self.C[i][j]:
+                    if self.C[i][j] is not DISALLOWED and minval > self.C[i][j]:
                         minval = self.C[i][j]
         return minval
 
-    def __find_a_zero(self):
+
+    def __find_a_zero(self, i0=0, j0=0):
         """Find the first uncovered element with value 0"""
         row = -1
         col = -1
-        i = 0
+        i = i0
         n = self.n
         done = False
 
         while not done:
-            j = 0
+            j = j0
             while True:
                 if (self.C[i][j] == 0) and \
                         (not self.row_covered[i]) and \
@@ -642,11 +650,11 @@ class Munkres:
                     row = i
                     col = j
                     done = True
-                j += 1
-                if j >= n:
+                j = (j + 1) % n
+                if j == j0:
                     break
-            i += 1
-            if i >= n:
+            i = (i + 1) % n
+            if i == i0:
                 done = True
 
         return (row, col)
