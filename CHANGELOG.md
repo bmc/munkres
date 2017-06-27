@@ -2,6 +2,13 @@
 
 Version 1.0.12 (June, 2017)
 
+- Merged [Pull Request #11](https://github.com/bmc/munkres/pull/11), from
+  [@brunokim](https://github.com/brunokim), which simplifies conversion of a 
+  profit matrix to a cost matrix, in the default case.
+  
+- Merged [Pull Request #7](https://github.com/bmc/munkres/pull/7), from
+  [@mdxs](https://github.com/mdxs), which fixes a message.
+  
 - Added more tests.
 
 Version 1.0.11 (June, 2017)
