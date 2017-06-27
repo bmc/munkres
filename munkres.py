@@ -14,7 +14,7 @@ useful for solving the Assignment Problem.
 Assignment Problem
 ==================
 
-Let *C* be an *n*\ x\ *n* matrix representing the costs of each of *n* workers
+Let *C* be an *n* by *n* matrix representing the costs of each of *n* workers
 to perform any of *n* jobs. The assignment problem is to assign jobs to
 workers in a way that minimizes the total cost. Since each worker can perform
 only one job and each job can be assigned to only one worker the assignments
@@ -23,13 +23,13 @@ represent an independent set of the matrix *C*.
 One way to generate the optimal set is to create all permutations of
 the indexes necessary to traverse the matrix so that no row and column
 are used more than once. For instance, given this matrix (expressed in
-Python)::
+Python):
 
     matrix = [[5, 9, 1],
               [10, 3, 2],
               [8, 7, 4]]
 
-You could use this code to generate the traversal indexes::
+You could use this code to generate the traversal indexes:
 
     def permute(a, results):
         if len(a) == 1:
@@ -48,7 +48,7 @@ You could use this code to generate the traversal indexes::
     results = []
     permute(range(len(matrix)), results) # [0, 1, 2] for a 3x3 matrix
 
-After the call to permute(), the results matrix would look like this::
+After the call to permute(), the results matrix would look like this:
 
     [[0, 1, 2],
      [0, 2, 1],
@@ -58,7 +58,7 @@ After the call to permute(), the results matrix would look like this::
      [2, 1, 0]]
 
 You could then use that index matrix to loop over the original cost matrix
-and calculate the smallest cost of the combinations::
+and calculate the smallest cost of the combinations:
 
     minval = sys.maxsize
     for indexes in results:
@@ -84,20 +84,20 @@ This version is based on
 http://csclab.murraystate.edu/~bob.pilgrim/445/munkres.html
 
 This version was written for Python by Brian Clapper from the algorithm
-at the above web site. (The ``Algorithm::Munkres`` Perl version, in CPAN, was
+at the above web site. (The ``Algorithm:Munkres`` Perl version, in CPAN, was
 clearly adapted from the same web site.)
 
 Usage
 =====
 
-Construct a Munkres object::
+Construct a Munkres object:
 
     from munkres import Munkres
 
     m = Munkres()
 
 Then use it to compute the lowest cost assignment from a cost matrix. Here's
-a sample program::
+a sample program:
 
     from munkres import Munkres, print_matrix
 
@@ -114,7 +114,7 @@ a sample program::
         print '(%d, %d) -> %d' % (row, column, value)
     print 'total cost: %d' % total
 
-Running that program produces::
+Running that program produces:
 
     Lowest cost through this matrix:
     [5, 9, 1]
@@ -151,7 +151,7 @@ the combination of elements (one from each row and column) that results in
 the smallest cost. It's also possible to use the algorithm to maximize
 profit. To do that, however, you have to convert your profit matrix to a
 cost matrix. The simplest way to do that is to subtract all elements from a
-large value. For example::
+large value. For example:
 
     from munkres import Munkres, print_matrix
 
@@ -176,7 +176,7 @@ large value. For example::
 
     print 'total profit=%d' % total
 
-Running that program produces::
+Running that program produces:
 
     Highest profit through this matrix:
     [5, 9, 1]
@@ -191,14 +191,14 @@ The ``munkres`` module provides a convenience method for creating a cost
 matrix from a profit matrix. Since it doesn't know whether the matrix contains
 floating point numbers, decimals, or integers, you have to provide the
 conversion function; but the convenience method takes care of the actual
-creation of the matrix::
+creation of the matrix:
 
     import munkres
 
     cost_matrix = munkres.make_cost_matrix(matrix,
                                            lambda cost: sys.maxsize - cost)
 
-So, the above profit-calculation program can be recast as::
+So, the above profit-calculation program can be recast as:
 
     from munkres import Munkres, print_matrix, make_cost_matrix
 
@@ -732,13 +732,13 @@ def make_cost_matrix(profit_matrix, inversion_function):
 
     This is a static method. Call it like this:
 
-    .. python::
+    .. python:
 
         cost_matrix = Munkres.make_cost_matrix(matrix, inversion_func)
 
     For example:
 
-    .. python::
+    .. python:
 
         cost_matrix = Munkres.make_cost_matrix(matrix, lambda x : sys.maxsize - x)
 

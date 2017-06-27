@@ -2,6 +2,8 @@
 
 Version 1.0.11 (June, 2017)
 
+- Docs are now generated with [pdoc](https://github.com/BurntSushi/pdoc).
+
 - Merged [Pull Request 24](https://github.com/bmc/munkres/pull/24), from
   [@czlee](https://github.com/czlee): 
     - Change to step 4: When it looks for a uncovered zero, rather than starting 

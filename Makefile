@@ -2,11 +2,21 @@
 
 all: dist
 
-.PHONY: all sdist dist clean
+.PHONY: all sdist dist clean test
 
-sdist: dist
-dist:
-	python setup.py sdist --formats=gztar,zip
+test:
+	nosetests
+
+dist: test
+	python setup.py sdist bdist_wheel
+
+doc: apidoc
+
+apidoc:
+	pdoc --html --html-no-source --overwrite --html-dir apidocs munkres.py
+
+publish: dist
+	python setup.py bdist_wheel upload
 
 clean:
-	rm -fr html dist build MANIFEST munkres.pyc
+	rm -fr html dist build MANIFEST munkres.pyc apidocs
