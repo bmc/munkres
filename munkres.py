@@ -532,11 +532,11 @@ class Munkres:
         """
         step = 0
         done = False
-        row = -1
-        col = -1
+        row = 0
+        col = 0
         star_col = -1
         while not done:
-            (row, col) = self.__find_a_zero()
+            (row, col) = self.__find_a_zero(row, col)
             if row < 0:
                 done = True
                 step = 6
@@ -627,16 +627,16 @@ class Munkres:
         return minval
 
 
-    def __find_a_zero(self):
+    def __find_a_zero(self, i0=0, j0=0):
         """Find the first uncovered element with value 0"""
         row = -1
         col = -1
-        i = 0
+        i = i0
         n = self.n
         done = False
 
         while not done:
-            j = 0
+            j = j0
             while True:
                 if (self.C[i][j] == 0) and \
                         (not self.row_covered[i]) and \
@@ -644,11 +644,11 @@ class Munkres:
                     row = i
                     col = j
                     done = True
-                j += 1
-                if j >= n:
+                j = (j + 1) % n
+                if j == j0:
                     break
-            i += 1
-            if i >= n:
+            i = (i + 1) % n
+            if i == i0:
                 done = True
 
         return (row, col)
