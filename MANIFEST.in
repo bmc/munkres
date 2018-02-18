@@ -1,2 +1,3 @@
 recursive-include html *
+recursive-include test *.md
 include LICENSE.md README.md CHANGELOG.md
