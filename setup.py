@@ -63,7 +63,7 @@ class Doc(CommandHelper):
 
     def run(self):
         os.environ['PYTHONPATH'] = '.'
-        cmd = 'pdoc --html --html-dir {} --overwrite --html-no-source grizzled'.format(
+        cmd = 'pdoc --html --html-dir {} --overwrite --html-no-source munkres'.format(
             API_DOCS_BUILD
         )
         print('+ {}'.format(cmd))
@@ -88,6 +88,7 @@ setup(
     version=version,
     description="Munkres (Hungarian) algorithm for the Assignment Problem",
     long_description=long_description,
+    long_description_content_type='text/markdown',
     url=url,
     license=license,
     author=author,
