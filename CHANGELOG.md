@@ -1,5 +1,12 @@
 # Change Log, munkres.py
 
+Version 1.1.0 (February, 2019)
+
+- Only supports Python 3.5 or better, from this version forward (since Python
+  2 is at end of life in 11 months).
+- Added `typing` type hints.
+- Updated docs to use `pdoc`, since `epydoc` is pretty much dead.
+
 Version 1.0.12 (June, 2017)
 
 - Merged [Pull Request #11](https://github.com/bmc/munkres/pull/11), from

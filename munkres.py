@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
-
-# Documentation is intended to be processed by Epydoc.
-
 """
 Introduction
 ============
@@ -70,21 +65,21 @@ and calculate the smallest cost of the combinations:
     print minval
 
 While this approach works fine for small matrices, it does not scale. It
-executes in O(*n*!) time: Calculating the permutations for an *n*\ x\ *n*
+executes in O(*n*!) time: Calculating the permutations for an *n* x *n*
 matrix requires *n*! operations. For a 12x12 matrix, that's 479,001,600
 traversals. Even if you could manage to perform each traversal in just one
 millisecond, it would still take more than 133 hours to perform the entire
 traversal. A 20x20 matrix would take 2,432,902,008,176,640,000 operations. At
 an optimistic millisecond per operation, that's more than 77 million years.
 
-The Munkres algorithm runs in O(*n*\ ^3) time, rather than O(*n*!). This
+The Munkres algorithm runs in O(*n*^3) time, rather than O(*n*!). This
 package provides an implementation of that algorithm.
 
 This version is based on
-http://csclab.murraystate.edu/~bob.pilgrim/445/munkres.html
+<http://csclab.murraystate.edu/~bob.pilgrim/445/munkres.html>
 
 This version was written for Python by Brian Clapper from the algorithm
-at the above web site. (The ``Algorithm:Munkres`` Perl version, in CPAN, was
+at the above web site. (The `Algorithm:Munkres` Perl version, in CPAN, was
 clearly adapted from the same web site.)
 
 Usage
@@ -187,7 +182,7 @@ Running that program produces:
     (2, 2) -> 4
     total profit=23
 
-The ``munkres`` module provides a convenience method for creating a cost
+The `munkres` module provides a convenience method for creating a cost
 matrix from a profit matrix. By default, it calculates the maximum profit
 and subtracts every profit from it to obtain a cost. If, however, you
 need a more general function, you can provide the
@@ -258,7 +253,7 @@ Running this program produces:
 References
 ==========
 
-1. http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html
+1. <http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html>
 
 2. Harold W. Kuhn. The Hungarian Method for the assignment problem.
    *Naval Research Logistics Quarterly*, 2:83-97, 1955.
@@ -270,18 +265,18 @@ References
    *Journal of the Society of Industrial and Applied Mathematics*,
    5(1):32-38, March, 1957.
 
-5. http://en.wikipedia.org/wiki/Hungarian_algorithm
+5. <http://en.wikipedia.org/wiki/Hungarian_algorithm>
 
 Copyright and License
 =====================
 
-Copyright 2008-2016 Brian M. Clapper
+Copyright 2008-2019 Brian M. Clapper
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+<http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -290,7 +285,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-__docformat__ = 'restructuredtext'
+__docformat__ = 'markdown'
 
 # ---------------------------------------------------------------------------
 # Imports
@@ -298,6 +293,7 @@ __docformat__ = 'restructuredtext'
 
 import sys
 import copy
+from typing import Union, NewType, Sequence, Tuple, NoReturn, Optional, Callable
 
 # ---------------------------------------------------------------------------
 # Exports
@@ -309,11 +305,14 @@ __all__     = ['Munkres', 'make_cost_matrix', 'DISALLOWED']
 # Globals
 # ---------------------------------------------------------------------------
 
+AnyNum = NewType('AnyNum', Union[int, float])
+Matrix = NewType('Matrix', Sequence[Sequence[AnyNum]])
+
 # Info about the module
-__version__   = "1.0.12"
+__version__   = "1.1.0"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://software.clapper.org/munkres/"
-__copyright__ = "(c) 2008-2017 Brian M. Clapper"
+__copyright__ = "(c) 2008-2019 Brian M. Clapper"
 __license__   = "Apache Software License"
 
 # Constants
@@ -353,30 +352,18 @@ class Munkres:
         self.marked = None
         self.path = None
 
-    def make_cost_matrix(profit_matrix, inversion_function):
-        """
-        **DEPRECATED**
-
-        Please use the module function ``make_cost_matrix()``.
-        """
-        import munkres
-        return munkres.make_cost_matrix(profit_matrix, inversion_function)
-
-    make_cost_matrix = staticmethod(make_cost_matrix)
-
-    def pad_matrix(self, matrix, pad_value=0):
+    def pad_matrix(self, matrix: Matrix, pad_value: int=0) -> Matrix:
         """
         Pad a possibly non-square matrix to make it square.
 
-        :Parameters:
-            matrix : list of lists
-                matrix to pad
+        **Parameters**
 
-            pad_value : int
-                value to use to pad the matrix
+        - `matrix` (list of lists of numbers): matrix to pad
+        - `pad_value` (`int`): value to use to pad the matrix
 
-        :rtype: list of lists
-        :return: a new, possibly padded, matrix
+        **Returns**
+
+        a new, possibly padded, matrix
         """
         max_columns = 0
         total_rows = len(matrix)
@@ -400,26 +387,27 @@ class Munkres:
 
         return new_matrix
 
-    def compute(self, cost_matrix):
+    def compute(self, cost_matrix: Matrix) -> Sequence[Tuple[int, int]]:
         """
         Compute the indexes for the lowest-cost pairings between rows and
-        columns in the database. Returns a list of (row, column) tuples
+        columns in the database. Returns a list of `(row, column)` tuples
         that can be used to traverse the matrix.
 
-        :Parameters:
-            cost_matrix : list of lists
-                The cost matrix. If this cost matrix is not square, it
-                will be padded with zeros, via a call to ``pad_matrix()``.
-                (This method does *not* modify the caller's matrix. It
-                operates on a copy of the matrix.)
+        **WARNING**: This code handles square and rectangular matrices. It
+        does *not* handle irregular matrices.
 
-                **WARNING**: This code handles square and rectangular
-                matrices. It does *not* handle irregular matrices.
+        **Parameters**
 
-        :rtype: list
-        :return: A list of ``(row, column)`` tuples that describe the lowest
-                 cost path through the matrix
+        - `cost_matrix` (list of lists of numbers): The cost matrix. If this
+          cost matrix is not square, it will be padded with zeros, via a call
+          to `pad_matrix()`. (This method does *not* modify the caller's
+          matrix. It operates on a copy of the matrix.)
 
+
+        **Returns**
+
+        A list of `(row, column)` tuples that describe the lowest cost path
+        through the matrix
         """
         self.C = self.pad_matrix(cost_matrix)
         self.n = len(self.C)
@@ -458,11 +446,11 @@ class Munkres:
 
         return results
 
-    def __copy_matrix(self, matrix):
+    def __copy_matrix(self, matrix: Matrix) -> Matrix:
         """Return an exact copy of the supplied matrix"""
         return copy.deepcopy(matrix)
 
-    def __make_matrix(self, n, val):
+    def __make_matrix(self, n: int, val: AnyNum) -> Matrix:
         """Create an *n*x*n* matrix, populating it with the specific value."""
         matrix = []
         for i in range(n):
@@ -638,7 +626,7 @@ class Munkres:
         return minval
 
 
-    def __find_a_zero(self, i0=0, j0=0):
+    def __find_a_zero(self, i0: int = 0, j0: int = 0) -> Tuple[int, int]:
         """Find the first uncovered element with value 0"""
         row = -1
         col = -1
@@ -664,7 +652,7 @@ class Munkres:
 
         return (row, col)
 
-    def __find_star_in_row(self, row):
+    def __find_star_in_row(self, row: Sequence[AnyNum]) -> int:
         """
         Find the first starred element in the specified row. Returns
         the column index, or -1 if no starred element was found.
@@ -677,7 +665,7 @@ class Munkres:
 
         return col
 
-    def __find_star_in_col(self, col):
+    def __find_star_in_col(self, col: Sequence[AnyNum]) -> int:
         """
         Find the first starred element in the specified row. Returns
         the row index, or -1 if no starred element was found.
@@ -703,20 +691,22 @@ class Munkres:
 
         return col
 
-    def __convert_path(self, path, count):
+    def __convert_path(self,
+                       path: Sequence[Sequence[int]],
+                       count: int) -> NoReturn:
         for i in range(count+1):
             if self.marked[path[i][0]][path[i][1]] == 1:
                 self.marked[path[i][0]][path[i][1]] = 0
             else:
                 self.marked[path[i][0]][path[i][1]] = 1
 
-    def __clear_covers(self):
+    def __clear_covers(self) -> NoReturn:
         """Clear all covered matrix cells"""
         for i in range(self.n):
             self.row_covered[i] = False
             self.col_covered[i] = False
 
-    def __erase_primes(self):
+    def __erase_primes(self) -> NoReturn:
         """Erase all prime markings"""
         for i in range(self.n):
             for j in range(self.n):
@@ -727,37 +717,38 @@ class Munkres:
 # Functions
 # ---------------------------------------------------------------------------
 
-def make_cost_matrix(profit_matrix, inversion_function=None):
+def make_cost_matrix(
+        profit_matrix: Matrix,
+        inversion_function: Optional[Callable[[AnyNum], AnyNum]] = None
+    ) -> Matrix:
     """
-    Create a cost matrix from a profit matrix by calling
-    'inversion_function' to invert each value. The inversion
-    function must take one numeric argument (of any type) and return
-    another numeric argument which is presumed to be the cost inverse
-    of the original profit. In case the inversion function is not provided,
-    calculate it as max(matrix) - matrix.
+    Create a cost matrix from a profit matrix by calling `inversion_function()`
+    to invert each value. The inversion function must take one numeric argument
+    (of any type) and return another numeric argument which is presumed to be
+    the cost inverse of the original profit value. If the inversion function
+    is not provided, a given cell's inverted value is calculated as
+    `max(matrix) - value`.
 
     This is a static method. Call it like this:
 
-    .. python:
-
+        from munkres import Munkres
         cost_matrix = Munkres.make_cost_matrix(matrix, inversion_func)
 
     For example:
 
-    .. python:
-
+        from munkres import Munkres
         cost_matrix = Munkres.make_cost_matrix(matrix, lambda x : sys.maxsize - x)
 
-    :Parameters:
-        profit_matrix : list of lists
-            The matrix to convert from a profit to a cost matrix
+    **Parameters**
 
-        inversion_function : function
-            The function to use to invert each entry in the profit matrix.
-            In case it is not provided, calculate it as max(matrix) - matrix.
+    - `profit_matrix` (list of lists of numbers): The matrix to convert from
+       profit to cost values.
+    - `inversion_function` (`function`): The function to use to invert each
+       entry in the profit matrix.
 
-    :rtype: list of lists
-    :return: The converted matrix
+    **Returns**
+
+    A new matrix representing the inversion of `profix_matrix`.
     """
     if not inversion_function:
       maximum = max(max(row) for row in profit_matrix)
@@ -772,12 +763,10 @@ def print_matrix(matrix, msg=None):
     """
     Convenience function: Displays the contents of a matrix of integers.
 
-    :Parameters:
-        matrix : list of lists
-            Matrix to print
+    **Parameters**
 
-        msg : str
-            Optional message to print before displaying the matrix
+    - `matrix` (list of lists of numbers): The matrix to print
+    - `msg` (`str`): Optional message to print before displaying the matrix
     """
     import math
 
@@ -860,6 +849,6 @@ if __name__ == '__main__':
         for r, c in indexes:
             x = cost_matrix[r][c]
             total_cost += x
-            print('(%d, %d) -> %d' % (r, c, x))
-        print('lowest cost=%d' % total_cost)
+            print(('(%d, %d) -> %d' % (r, c, x)))
+        print(('lowest cost=%d' % total_cost))
         assert expected_total == total_cost
