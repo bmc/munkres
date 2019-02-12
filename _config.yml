@@ -1,2 +1,2 @@
-exclude: run-markdown.sh
-pygments: false
+highlighter: rouge
+markdown: kramdown
