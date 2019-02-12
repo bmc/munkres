@@ -1,5 +1,10 @@
 # Change Log, munkres.py
 
+Version 1.1.1 (February, 2019)
+
+- Version bump to get past a PyPI publishing issue. (Can't republish
+  partially published 1.1.0.)
+
 Version 1.1.0 (February, 2019)
 
 - Only supports Python 3.5 or better, from this version forward (since Python

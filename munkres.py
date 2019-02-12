@@ -33,7 +33,7 @@ AnyNum = NewType('AnyNum', Union[int, float])
 Matrix = NewType('Matrix', Sequence[Sequence[AnyNum]])
 
 # Info about the module
-__version__   = "1.1.0"
+__version__   = "1.1.1"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://software.clapper.org/munkres/"
 __copyright__ = "(c) 2008-2019 Brian M. Clapper"
