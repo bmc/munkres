@@ -23,13 +23,18 @@ This particular implementation is based on
 
 [Hungarian algorithm]: http://en.wikipedia.org/wiki/Hungarian_algorithm
 
-See the docs in munkres.py and the [home page][] for more details.
+See the docs on the [project page][] for more details.
 
-[home page]: http://software.clapper.org/munkres/
+**WARNING**: As of version 1.1.0, _munkres_ no longer supports Python 2.
+If you need to use this package with Python 2, install an earlier version.
+See [the installation instructions](http://software.clapper.org/munkres/#installing) 
+for details.
+
+[project page]: http://software.clapper.org/munkres/
 
 ## Copyright
 
-&copy; 2008-2017 Brian M. Clapper
+&copy; 2008-2019 Brian M. Clapper
 
 ## License
 
