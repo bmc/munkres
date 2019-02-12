@@ -905,8 +905,10 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -917,9 +919,11 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1063,7 +1067,6 @@ table {
         
           
   <ul>
-    <li class="mono"><a href="#munkres.Munkres.make_cost_matrix">make_cost_matrix</a></li>
     <li class="mono"><a href="#munkres.Munkres.__init__">__init__</a></li>
     <li class="mono"><a href="#munkres.Munkres.compute">compute</a></li>
     <li class="mono"><a href="#munkres.Munkres.pad_matrix">pad_matrix</a></li>
@@ -1089,274 +1092,7 @@ table {
 <p>The Munkres module provides an implementation of the Munkres algorithm
 (also called the Hungarian algorithm or the Kuhn-Munkres algorithm),
 useful for solving the Assignment Problem.</p>
-<h1>Assignment Problem</h1>
-<p>Let <em>C</em> be an <em>n</em> by <em>n</em> matrix representing the costs of each of <em>n</em> workers
-to perform any of <em>n</em> jobs. The assignment problem is to assign jobs to
-workers in a way that minimizes the total cost. Since each worker can perform
-only one job and each job can be assigned to only one worker the assignments
-represent an independent set of the matrix <em>C</em>.</p>
-<p>One way to generate the optimal set is to create all permutations of
-the indexes necessary to traverse the matrix so that no row and column
-are used more than once. For instance, given this matrix (expressed in
-Python):</p>
-<div class="codehilite"><pre><span></span>matrix = [[5, 9, 1],
-          [10, 3, 2],
-          [8, 7, 4]]
-</pre></div>
-
-
-<p>You could use this code to generate the traversal indexes:</p>
-<div class="codehilite"><pre><span></span>def permute(a, results):
-    if len(a) == 1:
-        results.insert(len(results), a)
-
-    else:
-        for i in range(0, len(a)):
-            element = a[i]
-            a_copy = [a[j] for j in range(0, len(a)) if j != i]
-            subresults = []
-            permute(a_copy, subresults)
-            for subresult in subresults:
-                result = [element] + subresult
-                results.insert(len(results), result)
-
-results = []
-permute(range(len(matrix)), results) # [0, 1, 2] for a 3x3 matrix
-</pre></div>
-
-
-<p>After the call to permute(), the results matrix would look like this:</p>
-<div class="codehilite"><pre><span></span>[[0, 1, 2],
- [0, 2, 1],
- [1, 0, 2],
- [1, 2, 0],
- [2, 0, 1],
- [2, 1, 0]]
-</pre></div>
-
-
-<p>You could then use that index matrix to loop over the original cost matrix
-and calculate the smallest cost of the combinations:</p>
-<div class="codehilite"><pre><span></span>minval = sys.maxsize
-for indexes in results:
-    cost = 0
-    for row, col in enumerate(indexes):
-        cost += matrix[row][col]
-    minval = min(cost, minval)
-
-print minval
-</pre></div>
-
-
-<p>While this approach works fine for small matrices, it does not scale. It
-executes in O(<em>n</em>!) time: Calculating the permutations for an <em>n</em>\ x\ <em>n</em>
-matrix requires <em>n</em>! operations. For a 12x12 matrix, that's 479,001,600
-traversals. Even if you could manage to perform each traversal in just one
-millisecond, it would still take more than 133 hours to perform the entire
-traversal. A 20x20 matrix would take 2,432,902,008,176,640,000 operations. At
-an optimistic millisecond per operation, that's more than 77 million years.</p>
-<p>The Munkres algorithm runs in O(<em>n</em>\ ^3) time, rather than O(<em>n</em>!). This
-package provides an implementation of that algorithm.</p>
-<p>This version is based on
-http://csclab.murraystate.edu/~bob.pilgrim/445/munkres.html</p>
-<p>This version was written for Python by Brian Clapper from the algorithm
-at the above web site. (The <code>Algorithm:Munkres</code> Perl version, in CPAN, was
-clearly adapted from the same web site.)</p>
-<h1>Usage</h1>
-<p>Construct a Munkres object:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">munkres</span> <span class="kn">import</span> <span class="n">Munkres</span>
-
-<span class="n">m</span> <span class="o">=</span> <span class="n">Munkres</span><span class="p">()</span>
-</pre></div>
-
-
-<p>Then use it to compute the lowest cost assignment from a cost matrix. Here's
-a sample program:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">munkres</span> <span class="kn">import</span> <span class="n">Munkres</span><span class="p">,</span> <span class="n">print_matrix</span>
-
-<span class="n">matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-          <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
-          <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">Munkres</span><span class="p">()</span>
-<span class="n">indexes</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
-<span class="n">print_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Lowest cost through this matrix:&#39;</span><span class="p">)</span>
-<span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span>
-    <span class="n">total</span> <span class="o">+=</span> <span class="n">value</span>
-    <span class="k">print</span> <span class="s1">&#39;(</span><span class="si">%d</span><span class="s1">, </span><span class="si">%d</span><span class="s1">) -&gt; </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-<span class="k">print</span> <span class="s1">&#39;total cost: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">total</span>
-</pre></div>
-
-
-<p>Running that program produces:</p>
-<div class="codehilite"><pre><span></span>Lowest cost through this matrix:
-[5, 9, 1]
-[10, 3, 2]
-[8, 7, 4]
-(0, 0) -&gt; 5
-(1, 1) -&gt; 3
-(2, 2) -&gt; 4
-total cost=12
-</pre></div>
-
-
-<p>The instantiated Munkres object can be used multiple times on different
-matrices.</p>
-<h1>Non-square Cost Matrices</h1>
-<p>The Munkres algorithm assumes that the cost matrix is square. However, it's
-possible to use a rectangular matrix if you first pad it with 0 values to make
-it square. This module automatically pads rectangular cost matrices to make
-them square.</p>
-<p>Notes:</p>
-<ul>
-<li>The module operates on a <em>copy</em> of the caller's matrix, so any padding will
-  not be seen by the caller.</li>
-<li>The cost matrix must be rectangular or square. An irregular matrix will
-  <em>not</em> work.</li>
-</ul>
-<h1>Calculating Profit, Rather than Cost</h1>
-<p>The cost matrix is just that: A cost matrix. The Munkres algorithm finds
-the combination of elements (one from each row and column) that results in
-the smallest cost. It's also possible to use the algorithm to maximize
-profit. To do that, however, you have to convert your profit matrix to a
-cost matrix. The simplest way to do that is to subtract all elements from a
-large value. For example:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">munkres</span> <span class="kn">import</span> <span class="n">Munkres</span><span class="p">,</span> <span class="n">print_matrix</span>
-
-<span class="n">matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-          <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
-          <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
-<span class="n">cost_matrix</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">matrix</span><span class="p">:</span>
-    <span class="n">cost_row</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
-        <span class="n">cost_row</span> <span class="o">+=</span> <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">-</span> <span class="n">col</span><span class="p">]</span>
-    <span class="n">cost_matrix</span> <span class="o">+=</span> <span class="p">[</span><span class="n">cost_row</span><span class="p">]</span>
-
-<span class="n">m</span> <span class="o">=</span> <span class="n">Munkres</span><span class="p">()</span>
-<span class="n">indexes</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">cost_matrix</span><span class="p">)</span>
-<span class="n">print_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Highest profit through this matrix:&#39;</span><span class="p">)</span>
-<span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span>
-    <span class="n">total</span> <span class="o">+=</span> <span class="n">value</span>
-    <span class="k">print</span> <span class="s1">&#39;(</span><span class="si">%d</span><span class="s1">, </span><span class="si">%d</span><span class="s1">) -&gt; </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-<span class="k">print</span> <span class="s1">&#39;total profit=</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">total</span>
-</pre></div>
-
-
-<p>Running that program produces:</p>
-<div class="codehilite"><pre><span></span>Highest profit through this matrix:
-[5, 9, 1]
-[10, 3, 2]
-[8, 7, 4]
-(0, 1) -&gt; 9
-(1, 0) -&gt; 10
-(2, 2) -&gt; 4
-total profit=23
-</pre></div>
-
-
-<p>The <code>munkres</code> module provides a convenience method for creating a cost
-matrix from a profit matrix. Since it doesn't know whether the matrix contains
-floating point numbers, decimals, or integers, you have to provide the
-conversion function; but the convenience method takes care of the actual
-creation of the matrix:</p>
-<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">munkres</span>
-
-<span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">munkres</span><span class="o">.</span><span class="n">make_cost_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span>
-                                       <span class="k">lambda</span> <span class="n">cost</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">-</span> <span class="n">cost</span><span class="p">)</span>
-</pre></div>
-
-
-<p>So, the above profit-calculation program can be recast as:</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">munkres</span> <span class="kn">import</span> <span class="n">Munkres</span><span class="p">,</span> <span class="n">print_matrix</span><span class="p">,</span> <span class="n">make_cost_matrix</span>
-
-<span class="n">matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-          <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
-          <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
-<span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">make_cost_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">cost</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">-</span> <span class="n">cost</span><span class="p">)</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">Munkres</span><span class="p">()</span>
-<span class="n">indexes</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">cost_matrix</span><span class="p">)</span>
-<span class="n">print_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Lowest cost through this matrix:&#39;</span><span class="p">)</span>
-<span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span>
-    <span class="n">total</span> <span class="o">+=</span> <span class="n">value</span>
-    <span class="k">print</span> <span class="s1">&#39;(</span><span class="si">%d</span><span class="s1">, </span><span class="si">%d</span><span class="s1">) -&gt; </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-<span class="k">print</span> <span class="s1">&#39;total profit=</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">total</span>
-</pre></div>
-
-
-<h1>Disallowed Assignments</h1>
-<p>You can also mark assignments in your cost or profit matrix as disallowed.
-Simply use the munkres.DISALLOWED constant.</p>
-<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">munkres</span> <span class="kn">import</span> <span class="n">Munkres</span><span class="p">,</span> <span class="n">print_matrix</span><span class="p">,</span> <span class="n">make_cost_matrix</span><span class="p">,</span> <span class="n">DISALLOWED</span>
-
-<span class="n">matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">DISALLOWED</span><span class="p">],</span>
-          <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="n">DISALLOWED</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
-          <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
-<span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">make_cost_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">cost</span><span class="p">:</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">-</span> <span class="n">cost</span><span class="p">)</span> <span class="k">if</span>
-                                      <span class="p">(</span><span class="n">cost</span> <span class="o">!=</span> <span class="n">DISALLOWED</span><span class="p">)</span> <span class="k">else</span> <span class="n">DISALLOWED</span><span class="p">)</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">Munkres</span><span class="p">()</span>
-<span class="n">indexes</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">cost_matrix</span><span class="p">)</span>
-<span class="n">print_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Lowest cost through this matrix:&#39;</span><span class="p">)</span>
-<span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">column</span><span class="p">]</span>
-    <span class="n">total</span> <span class="o">+=</span> <span class="n">value</span>
-    <span class="k">print</span> <span class="s1">&#39;(</span><span class="si">%d</span><span class="s1">, </span><span class="si">%d</span><span class="s1">) -&gt; </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-<span class="k">print</span> <span class="s1">&#39;total profit=</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">total</span>
-</pre></div>
-
-
-<p>Running this program produces:</p>
-<div class="codehilite"><pre><span></span>Lowest cost through this matrix:
-[ 5,  9,  D]
-[10,  D,  2]
-[ 8,  7,  4]
-(0, 1) -&gt; 9
-(1, 0) -&gt; 10
-(2, 2) -&gt; 4
-total profit=23
-</pre></div>
-
-
-<h1>References</h1>
-<ol>
-<li>
-<p>http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html</p>
-</li>
-<li>
-<p>Harold W. Kuhn. The Hungarian Method for the assignment problem.
-   <em>Naval Research Logistics Quarterly</em>, 2:83-97, 1955.</p>
-</li>
-<li>
-<p>Harold W. Kuhn. Variants of the Hungarian method for assignment
-   problems. <em>Naval Research Logistics Quarterly</em>, 3: 253-258, 1956.</p>
-</li>
-<li>
-<p>Munkres, J. Algorithms for the Assignment and Transportation Problems.
-   <em>Journal of the Society of Industrial and Applied Mathematics</em>,
-   5(1):32-38, March, 1957.</p>
-</li>
-<li>
-<p>http://en.wikipedia.org/wiki/Hungarian_algorithm</p>
-</li>
-</ol>
-<h1>Copyright and License</h1>
-<p>Copyright 2008-2016 Brian M. Clapper</p>
-<p>Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at</p>
-<p>http://www.apache.org/licenses/LICENSE-2.0</p>
-<p>Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.</p>
+<p>For complete usage documentation, see: http://software.clapper.org/munkres/</p>
   
 
   </header>
@@ -1376,39 +1112,39 @@ limitations under the License.</p>
       
   <div class="item">
     <div class="name def" id="munkres.make_cost_matrix">
-    <p>def <span class="ident">make_cost_matrix</span>(</p><p>profit_matrix, inversion_function)</p>
+    <p>def <span class="ident">make_cost_matrix</span>(</p><p>profit_matrix, inversion_function=None)</p>
     </div>
     
 
     
   
-    <div class="desc"><p>Create a cost matrix from a profit matrix by calling
-'inversion_function' to invert each value. The inversion
-function must take one numeric argument (of any type) and return
-another numeric argument which is presumed to be the cost inverse
-of the original profit.</p>
+    <div class="desc"><p>Create a cost matrix from a profit matrix by calling <code>inversion_function()</code>
+to invert each value. The inversion function must take one numeric argument
+(of any type) and return another numeric argument which is presumed to be
+the cost inverse of the original profit value. If the inversion function
+is not provided, a given cell's inverted value is calculated as
+<code>max(matrix) - value</code>.</p>
 <p>This is a static method. Call it like this:</p>
-<p>.. python:</p>
-<div class="codehilite"><pre><span></span>cost_matrix = Munkres.make_cost_matrix(matrix, inversion_func)
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">munkres</span> <span class="kn">import</span> <span class="n">Munkres</span>
+<span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">Munkres</span><span class="o">.</span><span class="n">make_cost_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">inversion_func</span><span class="p">)</span>
 </pre></div>
 
 
 <p>For example:</p>
-<p>.. python:</p>
-<div class="codehilite"><pre><span></span>cost_matrix = Munkres.make_cost_matrix(matrix, lambda x : sys.maxsize - x)
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">munkres</span> <span class="kn">import</span> <span class="n">Munkres</span>
+<span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">Munkres</span><span class="o">.</span><span class="n">make_cost_matrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 
 
-<p>:Parameters:
-    profit_matrix : list of lists
-        The matrix to convert from a profit to a cost matrix</p>
-<div class="codehilite"><pre><span></span><span class="n">inversion_function</span> <span class="o">:</span> <span class="kd">function</span>
-    <span class="n">The</span> <span class="kd">function</span> <span class="n">to</span> <span class="n">use</span> <span class="n">to</span> <span class="n">invert</span> <span class="k">each</span> <span class="n">entry</span> <span class="k">in</span> <span class="n">the</span> <span class="n">profit</span> <span class="n">matrix</span>
-</pre></div>
-
-
-<p>:rtype: list of lists
-:return: The converted matrix</p></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><code>profit_matrix</code> (list of lists of numbers): The matrix to convert from
+   profit to cost values.</li>
+<li><code>inversion_function</code> (<code>function</code>): The function to use to invert each
+   entry in the profit matrix.</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A new matrix representing the inversion of <code>profix_matrix</code>.</p></div>
   <div class="source_cont">
 </div>
 
@@ -1431,19 +1167,70 @@ See the module documentation for usage.</p></div>
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
           <li><a href="#munkres.Munkres">Munkres</a></li>
+          <li>builtins.object</li>
           </ul>
           <h3>Static methods</h3>
             
   <div class="item">
-    <div class="name def" id="munkres.Munkres.make_cost_matrix">
-    <p>def <span class="ident">make_cost_matrix</span>(</p><p>profit_matrix, inversion_function)</p>
+    <div class="name def" id="munkres.Munkres.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self)</p>
     </div>
     
 
     
   
-    <div class="desc"><p><strong>DEPRECATED</strong></p>
-<p>Please use the module function <code>make_cost_matrix()</code>.</p></div>
+    <div class="desc"><p>Create a new instance</p></div>
+  <div class="source_cont">
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="munkres.Munkres.compute">
+    <p>def <span class="ident">compute</span>(</p><p>self, cost_matrix)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Compute the indexes for the lowest-cost pairings between rows and
+columns in the database. Returns a list of <code>(row, column)</code> tuples
+that can be used to traverse the matrix.</p>
+<p><strong>WARNING</strong>: This code handles square and rectangular matrices. It
+does <em>not</em> handle irregular matrices.</p>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><code>cost_matrix</code> (list of lists of numbers): The cost matrix. If this
+  cost matrix is not square, it will be padded with zeros, via a call
+  to <code>pad_matrix()</code>. (This method does <em>not</em> modify the caller's
+  matrix. It operates on a copy of the matrix.)</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>A list of <code>(row, column)</code> tuples that describe the lowest cost path
+through the matrix</p></div>
+  <div class="source_cont">
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="munkres.Munkres.pad_matrix">
+    <p>def <span class="ident">pad_matrix</span>(</p><p>self, matrix, pad_value=0)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Pad a possibly non-square matrix to make it square.</p>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><code>matrix</code> (list of lists of numbers): matrix to pad</li>
+<li><code>pad_value</code> (<code>int</code>): value to use to pad the matrix</li>
+</ul>
+<p><strong>Returns</strong></p>
+<p>a new, possibly padded, matrix</p></div>
   <div class="source_cont">
 </div>
 
@@ -1530,78 +1317,6 @@ See the module documentation for usage.</p></div>
 </div>
 
             </div>
-          <h3>Methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="munkres.Munkres.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Create a new instance</p></div>
-  <div class="source_cont">
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="munkres.Munkres.compute">
-    <p>def <span class="ident">compute</span>(</p><p>self, cost_matrix)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Compute the indexes for the lowest-cost pairings between rows and
-columns in the database. Returns a list of (row, column) tuples
-that can be used to traverse the matrix.</p>
-<p>:Parameters:
-    cost_matrix : list of lists
-        The cost matrix. If this cost matrix is not square, it
-        will be padded with zeros, via a call to <code>pad_matrix()</code>.
-        (This method does <em>not</em> modify the caller's matrix. It
-        operates on a copy of the matrix.)</p>
-<div class="codehilite"><pre><span></span>    **WARNING**: This code handles square and rectangular
-    matrices. It does *not* handle irregular matrices.
-</pre></div>
-
-
-<p>:rtype: list
-:return: A list of <code>(row, column)</code> tuples that describe the lowest
-         cost path through the matrix</p></div>
-  <div class="source_cont">
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="munkres.Munkres.pad_matrix">
-    <p>def <span class="ident">pad_matrix</span>(</p><p>self, matrix, pad_value=0)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Pad a possibly non-square matrix to make it square.</p>
-<p>:Parameters:
-    matrix : list of lists
-        matrix to pad</p>
-<div class="codehilite"><pre><span></span><span class="n">pad_value</span> <span class="o">:</span> <span class="n">int</span>
-    <span class="n">value</span> <span class="n">to</span> <span class="n">use</span> <span class="n">to</span> <span class="n">pad</span> <span class="n">the</span> <span class="n">matrix</span>
-</pre></div>
-
-
-<p>:rtype: list of lists
-:return: a new, possibly padded, matrix</p></div>
-  <div class="source_cont">
-</div>
-
-  </div>
-  
       </div>
       </div>
 
