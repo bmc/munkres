@@ -33,7 +33,7 @@ AnyNum = NewType('AnyNum', Union[int, float])
 Matrix = NewType('Matrix', Sequence[Sequence[AnyNum]])
 
 # Info about the module
-__version__   = "1.1.1"
+__version__   = "1.1.2"
 __author__    = "Brian Clapper, bmc@clapper.org"
 __url__       = "http://software.clapper.org/munkres/"
 __copyright__ = "(c) 2008-2019 Brian M. Clapper"
@@ -402,7 +402,7 @@ class Munkres:
 
         return row
 
-    def __find_prime_in_row(self, row):
+    def __find_prime_in_row(self, row) -> int:
         """
         Find the first prime element in the specified row. Returns
         the column index, or -1 if no starred element was found.
@@ -417,20 +417,20 @@ class Munkres:
 
     def __convert_path(self,
                        path: Sequence[Sequence[int]],
-                       count: int):
+                       count: int) -> None:
         for i in range(count+1):
             if self.marked[path[i][0]][path[i][1]] == 1:
                 self.marked[path[i][0]][path[i][1]] = 0
             else:
                 self.marked[path[i][0]][path[i][1]] = 1
 
-    def __clear_covers(self):
+    def __clear_covers(self) -> None:
         """Clear all covered matrix cells"""
         for i in range(self.n):
             self.row_covered[i] = False
             self.col_covered[i] = False
 
-    def __erase_primes(self):
+    def __erase_primes(self) -> None:
         """Erase all prime markings"""
         for i in range(self.n):
             for j in range(self.n):
@@ -483,7 +483,7 @@ def make_cost_matrix(
         cost_matrix.append([inversion_function(value) for value in row])
     return cost_matrix
 
-def print_matrix(matrix, msg=None):
+def print_matrix(matrix: Matrix, msg: Optional[str] = None) -> None:
     """
     Convenience function: Displays the contents of a matrix of integers.
 

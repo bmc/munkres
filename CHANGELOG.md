@@ -1,5 +1,10 @@
 # Change Log, munkres.py
 
+Version 1.1.2 (February, 2019)
+
+- Removed `NoReturn` type annotations, to allow compatibility with Python 3.5 
+  releases prior to 3.5.4. Thanks to @jackwilsdon for catching that issue.
+
 Version 1.1.1 (February, 2019)
 
 - Version bump to get past a PyPI publishing issue. (Can't republish
