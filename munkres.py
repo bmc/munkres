@@ -181,7 +181,7 @@ class Munkres:
             matrix += [[val for j in range(n)]]
         return matrix
 
-    def __step1(self):
+    def __step1(self) -> int:
         """
         For each row of the matrix, find the smallest element and
         subtract it from every element in its row. Go to Step 2.
@@ -204,7 +204,7 @@ class Munkres:
                     self.C[i][j] -= minval
         return 2
 
-    def __step2(self):
+    def __step2(self) -> int:
         """
         Find a zero (Z) in the resulting matrix. If there is no starred
         zero in its row or column, star Z. Repeat for each element in the
@@ -224,7 +224,7 @@ class Munkres:
         self.__clear_covers()
         return 3
 
-    def __step3(self):
+    def __step3(self) -> int:
         """
         Cover each column containing a starred zero. If K columns are
         covered, the starred zeros describe a complete set of unique
@@ -245,7 +245,7 @@ class Munkres:
 
         return step
 
-    def __step4(self):
+    def __step4(self) -> int:
         """
         Find a noncovered zero and prime it. If there is no starred zero
         in the row containing this primed zero, Go to Step 5. Otherwise,
@@ -278,7 +278,7 @@ class Munkres:
 
         return step
 
-    def __step5(self):
+    def __step5(self) -> int:
         """
         Construct a series of alternating primed and starred zeros as
         follows. Let Z0 represent the uncovered primed zero found in Step 4.
@@ -314,7 +314,7 @@ class Munkres:
         self.__erase_primes()
         return 3
 
-    def __step6(self):
+    def __step6(self) -> int:
         """
         Add the value found in Step 4 to every element of each covered
         row, and subtract it from every element of each uncovered column.
@@ -339,7 +339,7 @@ class Munkres:
             raise UnsolvableMatrix("Matrix cannot be solved!")
         return 4
 
-    def __find_smallest(self):
+    def __find_smallest(self) -> AnyNum:
         """Find the smallest uncovered value in the matrix."""
         minval = sys.maxsize
         for i in range(self.n):
