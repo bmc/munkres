@@ -17,7 +17,7 @@ __docformat__ = 'markdown'
 
 import sys
 import copy
-from typing import Union, NewType, Sequence, Tuple, NoReturn, Optional, Callable
+from typing import Union, NewType, Sequence, Tuple, Optional, Callable
 
 # ---------------------------------------------------------------------------
 # Exports
@@ -417,20 +417,20 @@ class Munkres:
 
     def __convert_path(self,
                        path: Sequence[Sequence[int]],
-                       count: int) -> NoReturn:
+                       count: int):
         for i in range(count+1):
             if self.marked[path[i][0]][path[i][1]] == 1:
                 self.marked[path[i][0]][path[i][1]] = 0
             else:
                 self.marked[path[i][0]][path[i][1]] = 1
 
-    def __clear_covers(self) -> NoReturn:
+    def __clear_covers(self):
         """Clear all covered matrix cells"""
         for i in range(self.n):
             self.row_covered[i] = False
             self.col_covered[i] = False
 
-    def __erase_primes(self) -> NoReturn:
+    def __erase_primes(self):
         """Erase all prime markings"""
         for i in range(self.n):
             for j in range(self.n):
