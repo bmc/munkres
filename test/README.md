@@ -5,4 +5,4 @@ pip install nose
 nosetests
 ```
 
-[Nose]: http://nose.readthedocs.io/en/latest/
+[Nose]: https://nose.readthedocs.io/en/latest/

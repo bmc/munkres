@@ -6,7 +6,7 @@ The Munkres module provides an implementation of the Munkres algorithm
 (also called the Hungarian algorithm or the Kuhn-Munkres algorithm),
 useful for solving the Assignment Problem.
 
-For complete usage documentation, see: http://software.clapper.org/munkres/
+For complete usage documentation, see: https://software.clapper.org/munkres/
 """
 
 __docformat__ = 'markdown'
@@ -35,7 +35,7 @@ Matrix = NewType('Matrix', Sequence[Sequence[AnyNum]])
 # Info about the module
 __version__   = "1.1.2"
 __author__    = "Brian Clapper, bmc@clapper.org"
-__url__       = "http://software.clapper.org/munkres/"
+__url__       = "https://software.clapper.org/munkres/"
 __copyright__ = "(c) 2008-2019 Brian M. Clapper"
 __license__   = "Apache Software License"
 

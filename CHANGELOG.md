@@ -73,7 +73,7 @@ Version 1.0.9 (Jan, 2017)
     - Added time bound to README. Addresses 
       [Issue #15](https://github.com/bmc/munkres/issues/15).
 - Versioning will now adhere to
-  [semantic version specification](http://semver.org).
+  [semantic version specification](https://semver.org).
 
 Version 1.0.8 (June, 2016)
 
