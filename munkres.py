@@ -485,7 +485,7 @@ def make_cost_matrix(
 
 def print_matrix(matrix: Matrix, msg: Optional[str] = None) -> None:
     """
-    Convenience function: Displays the contents of a matrix of integers.
+    Convenience function: Displays the contents of a matrix.
 
     **Parameters**
 
@@ -513,8 +513,8 @@ def print_matrix(matrix: Matrix, msg: Optional[str] = None) -> None:
         sep = '['
         for val in row:
             if val is DISALLOWED:
-                formatted = ((format + 's') % DISALLOWED_PRINTVAL)
-            else: formatted = ((format + 'd') % val)
+                val = DISALLOWED_PRINTVAL
+            formatted = ((format + 's') % val)
             sys.stdout.write(sep + formatted)
             sep = ', '
         sys.stdout.write(']\n')
