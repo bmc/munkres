@@ -545,11 +545,23 @@ if __name__ == '__main__':
           [9,  7,  4]],
          18),
 
+        # Square variant with floating point value
+        ([[10.1, 10.2,  8.3],
+          [9.4,  8.5,  1.6],
+          [9.7,  7.8,  4.9]],
+         19.5),
+
         # Rectangular variant
         ([[10, 10,  8, 11],
           [9,  8,  1, 1],
           [9,  7,  4, 10]],
          15),
+
+        # Rectangular variant with floating point value
+        ([[10.01, 10.02,  8.03, 11.04],
+          [9.05,  8.06,  1.07, 1.08],
+          [9.09,  7.1,  4.11, 10.12]],
+         15.2),
 
         # Rectangular with DISALLOWED
         ([[4, 5, 6, DISALLOWED],
@@ -558,12 +570,26 @@ if __name__ == '__main__':
           [12, 12, 12, 10]],
          20),
 
+        # Rectangular variant with DISALLOWED and floating point value
+        ([[4.001, 5.002, 6.003, DISALLOWED],
+          [1.004, 9.005, 12.006, 11.007],
+          [DISALLOWED, 5.008, 4.009, DISALLOWED],
+          [12.01, 12.011, 12.012, 10.013]],
+         20.028),
+
         # DISALLOWED to force pairings
         ([[1, DISALLOWED, DISALLOWED, DISALLOWED],
           [DISALLOWED, 2, DISALLOWED, DISALLOWED],
           [DISALLOWED, DISALLOWED, 3, DISALLOWED],
           [DISALLOWED, DISALLOWED, DISALLOWED, 4]],
-         10)]
+         10),
+
+        # DISALLOWED to force pairings with floating point value
+        ([[1.1, DISALLOWED, DISALLOWED, DISALLOWED],
+          [DISALLOWED, 2.2, DISALLOWED, DISALLOWED],
+          [DISALLOWED, DISALLOWED, 3.3, DISALLOWED],
+          [DISALLOWED, DISALLOWED, DISALLOWED, 4.4]],
+         11.0)]
 
     m = Munkres()
     for cost_matrix, expected_total in matrices:
@@ -573,6 +599,6 @@ if __name__ == '__main__':
         for r, c in indexes:
             x = cost_matrix[r][c]
             total_cost += x
-            print(('(%d, %d) -> %d' % (r, c, x)))
-        print(('lowest cost=%d' % total_cost))
+            print(('(%d, %d) -> %s' % (r, c, x)))
+        print(('lowest cost=%s' % total_cost))
         assert expected_total == total_cost
