@@ -1,6 +1,6 @@
 # Change Log, munkres.py
 
-Version 1.1.3 (September, 2020)
+Version 1.1.4 (September, 2020)
 
 - Switched from Nose to Pytest for testing. Patch courtesy @kmosiejczuk,
   [PR #32](https://github.com/bmc/munkres/pull/32), with some additional
@@ -10,6 +10,11 @@ Version 1.1.3 (September, 2020)
   via [PR #35](https://github.com/bmc/munkres/pull/35).
 - Various changes from `http:` URLs to `https:` URLs, courtesy @finn0
   via [PR #36](https://github.com/bmc/munkres/pull/36/).
+
+Version 1.1.3:
+
+**Nonexistent**. Accidentally published before check-in. Deleted from
+PyPI. Use version 1.1.4.
 
 Version 1.1.2 (February, 2019)
 
