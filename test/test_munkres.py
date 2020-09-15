@@ -44,7 +44,7 @@ def test_5_x_5_float():
               [9.16, 28.17, 26.18, 23.19, 13.2],
               [16.21, 16.22, 24.23, 6.24, 9.25]]
     cost = _get_cost(matrix)
-    assert_almost_equal(cost, 51.65)
+    assert cost == pytest.approx(51.65)
 
 
 def test_10_x_10():
@@ -73,7 +73,7 @@ def test_10_x_10_float():
               [21.081, 25.082, 23.083, 39.084, 31.085, 37.086, 32.087, 33.088, 38.089, 1.09],
               [17.091, 34.092, 40.093, 10.094, 29.095, 37.096, 40.097, 3.098, 25.099, 3.1]]
     cost = _get_cost(matrix)
-    assert_almost_equal(cost, 66.505)
+    assert cost == pytest.approx(66.505)
 
 def test_20_x_20():
     matrix = [[5, 4, 3, 9, 8, 9, 3, 5, 6, 9, 4, 10, 3, 5, 6, 6, 1, 8, 10, 2],
@@ -126,7 +126,7 @@ def test_20_x_20_float():
     fails. It happens because float values in this example have more number of
     digits after decimal point than other float examples.
     '''
-    assert_almost_equal(cost, 20.362, places=3)
+    assert cost == pytest.approx(20.362, rel=1e-3)
 
 def test_disallowed():
     matrix = [[5, 9, DISALLOWED],
@@ -140,7 +140,7 @@ def test_disallowed_float():
               [10.3, DISALLOWED, 2.4],
               [8.5, DISALLOWED, 4.6]]
     cost = _get_cost(matrix)
-    assert_almost_equal(cost, 20.1)
+    assert cost == pytest.approx(20.1)
 
 def test_profit():
     profit_matrix = [[94, 66, 100, 18, 48],
@@ -168,7 +168,7 @@ def test_profit_float():
     )
     indices = m.compute(cost_matrix)
     profit = sum([profit_matrix[row][column] for row, column in indices])
-    assert_almost_equal(profit, 362.65)
+    assert profit == pytest.approx(362.65)
 
 def test_irregular():
     matrix = [[12, 26, 17],
@@ -188,7 +188,7 @@ def test_irregular_float():
               [15.17, 93.18, 55.19, 80.2]]
 
     cost = _get_cost(matrix)
-    assert_almost_equal(cost, 43.42)
+    assert cost == pytest.approx(43.42)
 
 def test_rectangular():
     matrix = [[34, 26, 17, 12],
@@ -213,20 +213,19 @@ def test_rectangular_float():
     padded_matrix = m.pad_matrix(matrix, 0)
     padded_cost = _get_cost(padded_matrix)
     cost = _get_cost(matrix)
-    assert_almost_equal(padded_cost, cost)
-    assert_almost_equal(cost, 70.42)
+    assert padded_cost == pytest.approx(cost)
+    assert cost == pytest.approx(70.42)
 
-@raises(UnsolvableMatrix)
 def test_unsolvable():
-  with pytest.raises(UnsolvableMatrix):
-    matrix = [[5, 9, DISALLOWED],
-              [10, DISALLOWED, 2],
-              [DISALLOWED, DISALLOWED, DISALLOWED]]
-    m.compute(matrix)
+    with pytest.raises(UnsolvableMatrix):
+        matrix = [[5, 9, DISALLOWED],
+                [10, DISALLOWED, 2],
+                [DISALLOWED, DISALLOWED, DISALLOWED]]
+        m.compute(matrix)
 
-@raises(UnsolvableMatrix)
 def test_unsolvable_float():
-    matrix = [[5.1, 9.2, DISALLOWED],
-              [10.3, DISALLOWED, 2.4],
-              [DISALLOWED, DISALLOWED, DISALLOWED]]
-    m.compute(matrix)
+    with pytest.raises(UnsolvableMatrix):
+        matrix = [[5.1, 9.2, DISALLOWED],
+                [10.3, DISALLOWED, 2.4],
+                [DISALLOWED, DISALLOWED, DISALLOWED]]
+        m.compute(matrix)
