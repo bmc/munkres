@@ -9,7 +9,7 @@ Python 3 only (from version 1.1.0 forward):
 ```
 $ pip install twine
 $ pip install 'readme_renderer[md]'
-$ python setup.py test # run Nose tests. Make sure they pass.
+$ python setup.py test # run tests. Make sure they pass.
 $ python setup.py docs # create API docs (for main project page)
 $ python setup.py sdist bdist_wheel
 $ twine check dist/*
