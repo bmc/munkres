@@ -1,8 +1,8 @@
-The tests in this directory are intended to be run via [Nose][].
+The tests in this directory are intended to be run via [pytest][].
 
 ```
-pip install nose
-nosetests
+pip install pytest
+python -m pytest
 ```
 
-[Nose]: https://nose.readthedocs.io/en/latest/
+[pytest]: https://docs.pytest.org/
