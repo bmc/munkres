@@ -1,6 +1,6 @@
 from munkres import Munkres, DISALLOWED, UnsolvableMatrix
 import munkres
-from nose.tools import assert_equals, assert_almost_equal, raises
+import pytest
 
 m = Munkres()
 
@@ -16,7 +16,7 @@ def test_documented_example():
               [10, 3, 2],
               [8, 7, 4]]
     cost = _get_cost(matrix)
-    assert_equals(cost, 12)
+    assert cost == 12
 
 def float_example():
     '''
@@ -35,7 +35,7 @@ def test_5_x_5():
               [9, 28, 26, 23, 13],
               [16, 16, 24, 6, 9]]
     cost = _get_cost(matrix)
-    assert_equals(cost, 51)
+    assert cost == 51
 
 def test_5_x_5_float():
     matrix = [[12.01, 9.02, 27.03, 10.04, 23.05],
@@ -59,7 +59,7 @@ def test_10_x_10():
               [21, 25, 23, 39, 31, 37, 32, 33, 38, 1],
               [17, 34, 40, 10, 29, 37, 40, 3, 25, 3]]
     cost = _get_cost(matrix)
-    assert_equals(cost, 66)
+    assert cost == 66
 
 def test_10_x_10_float():
     matrix = [[37.001, 34.002, 29.003, 26.004, 19.005, 8.006, 9.007, 23.008, 19.009, 29.01],
@@ -97,7 +97,7 @@ def test_20_x_20():
               [9, 6, 3, 1, 8, 5, 7, 8, 7, 2, 1, 8, 2, 8, 3, 7, 4, 8, 7, 7],
               [8, 4, 4, 9, 7, 10, 6, 2, 1, 5, 8, 5, 1, 1, 1, 9, 1, 3, 5, 3]]
     cost = _get_cost(matrix)
-    assert_equals(cost, 22)
+    assert cost == 22
 
 def test_20_x_20_float():
     matrix = [[5.0001, 4.0002, 3.0003, 9.0004, 8.0005, 9.0006, 3.0007, 5.0008, 6.0009, 9.001, 4.0011, 10.0012, 3.0013, 5.0014, 6.0015, 6.0016, 1.0017, 8.0018, 10.0019, 2.002],
@@ -133,7 +133,7 @@ def test_disallowed():
               [10, DISALLOWED, 2],
               [8, DISALLOWED, 4]]
     cost = _get_cost(matrix)
-    assert_equals(cost, 19)
+    assert cost == 19
 
 def test_disallowed_float():
     matrix = [[5.1, 9.2, DISALLOWED],
@@ -154,7 +154,7 @@ def test_profit():
     )
     indices = m.compute(cost_matrix)
     profit = sum([profit_matrix[row][column] for row, column in indices])
-    assert_equals(profit, 392)
+    assert profit == 392
 
 def test_profit_float():
     profit_matrix = [[94.01, 66.02, 100.03, 18.04, 48.05],
@@ -178,7 +178,7 @@ def test_irregular():
               [15, 93, 55, 80]]
 
     cost = _get_cost(matrix)
-    assert_equals(cost, 43)
+    assert cost == 43
 
 def test_irregular_float():
     matrix = [[12.01, 26.02, 17.03],
@@ -200,8 +200,8 @@ def test_rectangular():
     padded_matrix = m.pad_matrix(matrix, 0)
     padded_cost = _get_cost(padded_matrix)
     cost = _get_cost(matrix)
-    assert_equals(padded_cost, cost)
-    assert_equals(cost, 70)
+    assert padded_cost == cost
+    assert cost == 70
 
 def test_rectangular_float():
     matrix = [[34.01, 26.02, 17.03, 12.04],
@@ -218,6 +218,7 @@ def test_rectangular_float():
 
 @raises(UnsolvableMatrix)
 def test_unsolvable():
+  with pytest.raises(UnsolvableMatrix):
     matrix = [[5, 9, DISALLOWED],
               [10, DISALLOWED, 2],
               [DISALLOWED, DISALLOWED, DISALLOWED]]
