@@ -19,9 +19,9 @@ from each row and column in the matrix, such that no row and no column are
 used more than once.
 
 This particular implementation is based on 
-<http://csclab.murraystate.edu/~bob.pilgrim/445/munkres.html>.
+<https://csclab.murraystate.edu/~bob.pilgrim/445/munkres.html>.
 
-[Hungarian algorithm]: http://en.wikipedia.org/wiki/Hungarian_algorithm
+[Hungarian algorithm]: https://en.wikipedia.org/wiki/Hungarian_algorithm
 
 See the docs on the [project page][] for more details.
 
@@ -30,7 +30,7 @@ If you need to use this package with Python 2, install an earlier version.
 See [the installation instructions](http://software.clapper.org/munkres/#installing) 
 for details.
 
-[project page]: http://software.clapper.org/munkres/
+[project page]: https://software.clapper.org/munkres/
 
 ## Copyright
 
