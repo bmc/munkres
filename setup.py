@@ -74,12 +74,11 @@ class Doc(CommandHelper):
 class Test(CommandHelper):
 
     def run(self):
-        import nose
-        try:
-            os.chdir('test')
-            nose.run()
-        finally:
-            os.chdir(here)
+        import pytest
+        os.environ['PYTHONPATH'] = '.'
+        rc = pytest.main(['-W', 'ignore', '-ra', '--cache-clear', 'test', '.'])
+        if rc != 0:
+            raise Exception('*** Tests failed.')
 
 # Run setup
 
