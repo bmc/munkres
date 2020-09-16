@@ -26,7 +26,7 @@ def float_example():
               [10.4, 3.5, 2.6],
               [8.7, 7.8, 4.9]]
     cost = _get_cost(matrix)
-    assert_almost_equal(cost, 13.5)
+    assert cost == pytest.approx(13.5)
 
 def test_5_x_5():
     matrix = [[12, 9, 27, 10, 23],
