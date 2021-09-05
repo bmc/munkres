@@ -133,6 +133,7 @@ class Munkres:
         A list of `(row, column)` tuples that describe the lowest cost path
         through the matrix
         """
+        self.__check_unsolvability(cost_matrix)
         self.C = self.pad_matrix(cost_matrix)
         self.n = len(self.C)
         self.original_length = len(cost_matrix)
@@ -180,6 +181,46 @@ class Munkres:
         for i in range(n):
             matrix += [[val for j in range(n)]]
         return matrix
+
+    def __transpose_matrix(self, matrix: Matrix):
+        return [list(row) for row in zip(*matrix)]
+
+    def __check_unsolvability(self, matrix: Matrix):
+        """Checks additional conditions to see if an input Munkres cost matrix is unsolvable.
+
+        This check identifies potential infinite loop edge cases and raises a ``munkres.UnsolvableMatrix`` error.
+
+
+        Args:
+            matrix (Matrix): a Matrix object, representing a cost matrix (or a profit matrix) suitable
+                for Munkres optimization.
+
+        Raises:
+            munkres.UnsolvableMatrix: if the matrix is unsolvable.
+        """
+
+        def _check_one_dimension_solvability(matrix):
+
+            non_disallowed_indices = []  # (in possibly-offending rows)
+
+            for row in matrix:
+
+                # check to see if all but 1 cell in the row are DISALLOWED
+
+                indices = [i for i, val in enumerate(row) if not isinstance(val, type(DISALLOWED))]
+
+                if len(indices) == 1:
+
+                    if indices[0] in non_disallowed_indices:
+                        raise UnsolvableMatrix(
+                            "This matrix cannot be solved and will loop infinitely"
+                        )
+
+                    non_disallowed_indices.append(indices[0])
+
+        _check_one_dimension_solvability(matrix)
+        transposed_matrix = self.__transpose_matrix(matrix)
+        _check_one_dimension_solvability(transposed_matrix)
 
     def __step1(self) -> int:
         """
