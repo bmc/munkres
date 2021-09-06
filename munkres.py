@@ -383,11 +383,17 @@ class Munkres:
     def __find_smallest(self) -> AnyNum:
         """Find the smallest uncovered value in the matrix."""
         minval = sys.maxsize
+        uncovered_vals = []
         for i in range(self.n):
             for j in range(self.n):
                 if (not self.row_covered[i]) and (not self.col_covered[j]):
+                    uncovered_vals.append(self.C[i][j])
                     if self.C[i][j] is not DISALLOWED and minval > self.C[i][j]:
                         minval = self.C[i][j]
+        if all(map(lambda val: type(val) is DISALLOWED_OBJ, uncovered_vals)):
+            raise UnsolvableMatrix(
+                "The only uncovered values are disallowed. This matrix will loop infinitely!"
+            )
         return minval
 
 
