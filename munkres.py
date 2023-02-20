@@ -219,8 +219,6 @@ class Munkres:
                     non_disallowed_indices.append(indices[0])
 
         _check_one_dimension_solvability(matrix)
-        transposed_matrix = self.__transpose_matrix(matrix)
-        _check_one_dimension_solvability(transposed_matrix)
 
     def __step1(self) -> int:
         """
