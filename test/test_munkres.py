@@ -216,12 +216,27 @@ def test_rectangular_float():
     assert padded_cost == pytest.approx(cost)
     assert cost == pytest.approx(70.42)
 
-def test_unsolvable():
-    with pytest.raises(UnsolvableMatrix):
-        matrix = [[5, 9, DISALLOWED],
+
+@pytest.mark.parametrize(
+    "unsolvable_matrix",
+    (
+            [
+                [5, 9, DISALLOWED],
                 [10, DISALLOWED, 2],
-                [DISALLOWED, DISALLOWED, DISALLOWED]]
-        m.compute(matrix)
+                [DISALLOWED, DISALLOWED, DISALLOWED]
+            ],
+
+            [
+                [DISALLOWED, 161, DISALLOWED],
+                [DISALLOWED, 1, DISALLOWED],
+                [DISALLOWED, 157, DISALLOWED],
+                [37, DISALLOWED, 5]
+            ]
+    )
+)
+def test_unsolvable(unsolvable_matrix):
+    with pytest.raises(UnsolvableMatrix):
+        m.compute(unsolvable_matrix)
 
 def test_unsolvable_float():
     with pytest.raises(UnsolvableMatrix):
