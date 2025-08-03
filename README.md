@@ -1,6 +1,11 @@
 Munkres implementation for Python
 ---------------------------------
 
+**Abandonware Alert:** I am no longer maintaining this package. If you
+would like to take over ownership of it, please contact me or open an
+issue, and I will gladly hand it off to you and link to your version in
+this README.
+
 <a href="https://pypi.python.org/pypi/munkres" target="_blank">
 <img src="https://img.shields.io/pypi/v/munkres.png">
 </a>
