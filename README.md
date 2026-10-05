@@ -1,8 +1,8 @@
 # Munkres implementation for Python
 
-**Abandonware Alert:** I am no longer maintaining this package. Eishit Nigram
-is now actively maintaining a version based upon this code, but with numerous
-improvements. I have handed the PyPI project to Eishit.
+<b style="color: red">Abandonware Alert!</b> I am no longer maintaining this
+package. Eishit Nigram is now actively maintaining a version based upon this
+code, but with numerous improvements. I have handed the PyPI project to Eishit.
 
 See: <https://github.com/iameishit/Paldita-munkres>
 
