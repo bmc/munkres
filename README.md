@@ -1,12 +1,18 @@
 # Munkres implementation for Python
 
-<b style="color: red">Abandonware Alert!</b> I am no longer maintaining this
-package. Eishit Nigram is now actively maintaining a version based upon this
-code, but with numerous improvements. I have handed the PyPI project to Eishit.
+## Abandonware Alert!
+
+I am no longer maintaining this package. Eishit Nigram is now actively
+maintaining a version based upon this code, but with numerous improvements. I
+have handed the PyPI project to Eishit.
 
 See: <https://github.com/iameishit/Paldita-munkres>
 
-## Introduction
+----
+
+## Historical
+
+### Introduction
 
 The Munkres module provides an O(n^3) implementation of the Munkres algorithm
 (also called the [Hungarian algorithm][] or the Kuhn-Munkres algorithm).
@@ -30,11 +36,11 @@ for details.
 
 [project page]: https://software.clapper.org/munkres/
 
-## Copyright
+### Copyright
 
-&copy; 2008-2019 Brian M. Clapper
+&copy; 2008-2020 Brian M. Clapper
 
-## License
+### License
 
 Licensed under the Apache License, Version 2.0. See
 [LICENSE](LICENSE.md) for details.
