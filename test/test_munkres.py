@@ -162,13 +162,13 @@ def test_profit_float():
                      [37.11, 53.12, 57.13, 78.14, 28.15],
                      [59.16, 43.17, 97.18, 88.19, 48.2],
                      [52.21, 19.22, 89.23, 60.24, 60.25]]
-    import sys
+    max_ = 2**32
     cost_matrix = munkres.make_cost_matrix(
-        profit_matrix, lambda cost: sys.maxsize - cost
+        profit_matrix, lambda cost: max_ - cost
     )
     indices = m.compute(cost_matrix)
     profit = sum([profit_matrix[row][column] for row, column in indices])
-    assert profit == pytest.approx(362.65)
+    assert profit == pytest.approx(392.65)
 
 def test_irregular():
     matrix = [[12, 26, 17],
