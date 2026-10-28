@@ -100,7 +100,7 @@ class Munkres:
         new_matrix = []
         for row in matrix:
             row_len = len(row)
-            new_row = row[:]
+            new_row = list(row[:])
             if total_rows > row_len:
                 # Row too short. Pad it.
                 new_row += [pad_value] * (total_rows - row_len)
@@ -163,8 +163,8 @@ class Munkres:
 
         # Look for the starred columns
         results = []
-        for i in range(self.original_length):
-            for j in range(self.original_width):
+        for i in range(self.n):
+            for j in range(self.n):
                 if self.marked[i][j] == 1:
                     results += [(i, j)]
 
